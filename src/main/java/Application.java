@@ -1,4 +1,4 @@
-package main.app;
+package main.java;
 
 /**
  * The main class of the application.

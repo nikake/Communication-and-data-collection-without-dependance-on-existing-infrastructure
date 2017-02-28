@@ -1,9 +1,9 @@
-package tests.app;
+package test.java;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import main.app.MachineID;
+import main.java.MachineID;
 
 public class MachineIDTest {
 

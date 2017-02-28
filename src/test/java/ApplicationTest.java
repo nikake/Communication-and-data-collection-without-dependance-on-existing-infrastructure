@@ -1,9 +1,9 @@
-package tests.app;
+package test.java;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import main.app.Application;
+import main.java.Application;
 
 public class ApplicationTest {
 

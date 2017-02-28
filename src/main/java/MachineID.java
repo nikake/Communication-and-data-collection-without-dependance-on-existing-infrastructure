@@ -1,4 +1,4 @@
-package main.app;
+package main.java;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
