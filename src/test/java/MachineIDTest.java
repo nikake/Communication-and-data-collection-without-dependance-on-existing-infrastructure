@@ -1,4 +1,4 @@
-package java;
+package test.java;
 
 import org.junit.*;
 import static org.junit.Assert.*;
