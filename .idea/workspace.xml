@@ -4,7 +4,6 @@
     <list default="true" id="4d7fb878-1e47-409a-8c69-6e5a990bf5ea" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/app/MachineID.java" afterPath="$PROJECT_DIR$/src/main/app/MachineID.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tests/app/MachineIDTest.java" afterPath="$PROJECT_DIR$/src/tests/app/MachineIDTest.java" />
     </list>
     <ignored path="Communication-and-data-collection-without-dependance-on-existing-infrastructure.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -592,7 +591,14 @@
       <option name="project" value="LOCAL" />
       <updated>1488304888927</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added test machineIDShouldBe6BytesInLength">
+      <created>1488306087045</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1488306087045</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -664,7 +670,8 @@
     <MESSAGE value="Created MachineIDTest.java" />
     <MESSAGE value="Created MachineID.java" />
     <MESSAGE value="Added test initMachineID" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added test initMachineID" />
+    <MESSAGE value="Added test machineIDShouldBe6BytesInLength" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added test machineIDShouldBe6BytesInLength" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
