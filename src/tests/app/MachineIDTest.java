@@ -12,17 +12,23 @@ public class MachineIDTest {
 
     @Before
     public void init() {
-        mID  = new MachineID();
+        mID  = MachineID.getInstance();
     }
 
     @Test
     public void initMachineID() {
-        new MachineID();
+        MachineID.getInstance();
     }
 
     @Test
     public void machineIDShouldBe6BytesInLength() {
         byte[] macAddress = mID.getMachineID();
         assertEquals(ADDRESS_LENGTH, macAddress.length);
+    }
+
+    @Test
+    public void thereShouldOnlyBeOneInstanceOfMachineID() {
+        MachineID other = MachineID.getInstance();
+        assertEquals(true, mID == other);
     }
 }
