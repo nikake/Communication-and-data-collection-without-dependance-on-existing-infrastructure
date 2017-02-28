@@ -7,6 +7,7 @@ import main.app.MachineID;
 
 public class MachineIDTest {
 
+    private static final int ADDRESS_LENGTH = 6;
     private MachineID  mID;
 
     @Before
@@ -17,5 +18,11 @@ public class MachineIDTest {
     @Test
     public void initMachineID() {
         new MachineID();
+    }
+
+    @Test
+    public void machineIDShouldBe6BytesInLength() {
+        byte[] macAddress = mID.getMachineID();
+        assertEquals(ADDRESS_LENGTH, macAddress.length);
     }
 }

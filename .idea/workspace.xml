@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4d7fb878-1e47-409a-8c69-6e5a990bf5ea" name="Default" comment="Created MachineIDTest.java">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/tests/app/MachineIDTest.java" />
+    <list default="true" id="4d7fb878-1e47-409a-8c69-6e5a990bf5ea" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/app/MachineID.java" afterPath="$PROJECT_DIR$/src/main/app/MachineID.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tests/app/MachineIDTest.java" afterPath="$PROJECT_DIR$/src/tests/app/MachineIDTest.java" />
     </list>
     <ignored path="Communication-and-data-collection-without-dependance-on-existing-infrastructure.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,9 +30,13 @@
           <file leaf-file-name="MachineID.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/app/MachineID.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="68">
-                  <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-                  <folding />
+                <state relative-caret-position="289">
+                  <caret line="17" column="9" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#469#470#0" expanded="true" />
+                    <element signature="e#495#496#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -65,14 +70,14 @@
           <file leaf-file-name="MachineIDTest.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/tests/app/MachineIDTest.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="306">
-                  <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
+                <state relative-caret-position="459">
+                  <caret line="27" column="1" selection-start-line="27" selection-start-column="1" selection-end-line="27" selection-end-column="1" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#197#198#0" expanded="true" />
-                    <element signature="e#235#236#0" expanded="true" />
-                    <element signature="e#280#281#0" expanded="true" />
-                    <element signature="e#311#312#0" expanded="true" />
+                    <element signature="e#246#247#0" expanded="true" />
+                    <element signature="e#284#285#0" expanded="true" />
+                    <element signature="e#329#330#0" expanded="true" />
+                    <element signature="e#360#361#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -219,7 +224,7 @@
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
   </component>
-  <component name="RunManager" selected="JUnit.MachineIDTest">
+  <component name="RunManager" selected="JUnit.MachineIDTest.machineIDShouldBe6BytesInLength">
     <configuration default="false" name="ApplicationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -260,6 +265,32 @@
       <option name="MAIN_CLASS_NAME" value="tests.app.MachineIDTest" />
       <option name="METHOD_NAME" />
       <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="false" name="MachineIDTest.machineIDShouldBe6BytesInLength" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="tests.app.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="Communication-and-data-collection-without-dependance-on-existing-infrastructure" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="tests.app" />
+      <option name="MAIN_CLASS_NAME" value="tests.app.MachineIDTest" />
+      <option name="METHOD_NAME" value="machineIDShouldBe6BytesInLength" />
+      <option name="TEST_OBJECT" value="method" />
       <option name="VM_PARAMETERS" value="-ea" />
       <option name="PARAMETERS" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -516,14 +547,16 @@
       <listeners />
       <method />
     </configuration>
-    <list size="2">
+    <list size="3">
       <item index="0" class="java.lang.String" itemvalue="JUnit.ApplicationTest" />
       <item index="1" class="java.lang.String" itemvalue="JUnit.MachineIDTest" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.MachineIDTest.machineIDShouldBe6BytesInLength" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="JUnit.MachineIDTest" />
-        <item index="1" class="java.lang.String" itemvalue="JUnit.ApplicationTest" />
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.MachineIDTest.machineIDShouldBe6BytesInLength" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.MachineIDTest" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.ApplicationTest" />
       </list>
     </recent_temporary>
   </component>
@@ -552,7 +585,14 @@
       <option name="project" value="LOCAL" />
       <updated>1488304755639</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added test initMachineID">
+      <created>1488304888927</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1488304888927</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -561,6 +601,21 @@
     </history-entry>
     <history-entry file="MachineIDTest - 2017.02.28 at 19h 00m 56s.xml">
       <configuration name="MachineIDTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MachineIDTest - 2017.02.28 at 19h 08m 34s.xml">
+      <configuration name="MachineIDTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MachineIDTest - 2017.02.28 at 19h 09m 35s.xml">
+      <configuration name="MachineIDTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MachineIDTest - 2017.02.28 at 19h 19m 05s.xml">
+      <configuration name="MachineIDTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MachineIDTest_machineIDShouldBe6BytesInLength - 2017.02.28 at 19h 20m 13s.xml">
+      <configuration name="MachineIDTest.machineIDShouldBe6BytesInLength" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="MachineIDTest_machineIDShouldBe6BytesInLength - 2017.02.28 at 19h 20m 37s.xml">
+      <configuration name="MachineIDTest.machineIDShouldBe6BytesInLength" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
@@ -575,7 +630,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32980973" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -608,7 +663,8 @@
     <MESSAGE value="Created Application.java" />
     <MESSAGE value="Created MachineIDTest.java" />
     <MESSAGE value="Created MachineID.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created MachineID.java" />
+    <MESSAGE value="Added test initMachineID" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added test initMachineID" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -635,14 +691,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/app/MachineID.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/tests/app/ApplicationTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -655,14 +703,26 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/tests/app/MachineIDTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="24" selection-start-line="18" selection-start-column="24" selection-end-line="18" selection-end-column="24" />
+        <state relative-caret-position="459">
+          <caret line="27" column="1" selection-start-line="27" selection-start-column="1" selection-end-line="27" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#197#198#0" expanded="true" />
-            <element signature="e#235#236#0" expanded="true" />
-            <element signature="e#280#281#0" expanded="true" />
-            <element signature="e#311#312#0" expanded="true" />
+            <element signature="e#246#247#0" expanded="true" />
+            <element signature="e#284#285#0" expanded="true" />
+            <element signature="e#329#330#0" expanded="true" />
+            <element signature="e#360#361#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/app/MachineID.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="9" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#469#470#0" expanded="true" />
+            <element signature="e#495#496#0" expanded="true" />
           </folding>
         </state>
       </provider>
