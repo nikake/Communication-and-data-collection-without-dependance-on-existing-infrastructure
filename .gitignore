@@ -12,6 +12,8 @@
 .idea/vcs.xml
 .idea/**/tasks.xml
 *.iml
+.idea
+.idea/**
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
