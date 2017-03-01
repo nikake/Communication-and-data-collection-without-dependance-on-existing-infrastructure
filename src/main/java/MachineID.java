@@ -6,13 +6,13 @@ import java.net.NetworkInterface;
 public class MachineID {
 
     private static MachineID instance = null;
-    private byte[] mID;
+    private byte[] macAddress;
 
     private MachineID() {
         try {
             InetAddress ip = InetAddress.getLocalHost();
             NetworkInterface ni = NetworkInterface.getByInetAddress(ip);
-            mID = ni.getHardwareAddress();
+            macAddress = ni.getHardwareAddress();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -26,6 +26,6 @@ public class MachineID {
     }
 
     public byte[] getMachineID() {
-        return mID;
+        return macAddress;
     }
 }
