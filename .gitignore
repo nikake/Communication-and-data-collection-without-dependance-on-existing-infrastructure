@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/intellij,windows,maven,java
 
 ### Intellij ###
@@ -6,6 +5,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
+.idea/*.xml
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 
