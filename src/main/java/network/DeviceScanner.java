@@ -38,7 +38,16 @@ public class DeviceScanner implements Runnable {
 
     private void scan() {
         synchronized (scanLock) {
-            byte[] machine = MachineID.getInstance().getMachineID();
+            byte[] machine = null;
+            try {
+                machine = InetAddress.getLocalHost().getAddress();
+            } catch(Exception e) {
+                System.out.println(e);
+            }
+            if (machine == null) {
+                System.out.println("IP-adress for the machine was null.");
+                return;
+            }
             byte[] subnet = machine;
             for (byte i = 0; i < 256; i++) {
                 subnet[3] = i;
