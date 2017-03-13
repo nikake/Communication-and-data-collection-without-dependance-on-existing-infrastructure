@@ -12,6 +12,7 @@ public class Application {
     public static void main(String[] args) {
 
         while(keepRunning) {
+            System.out.println("Initiating thread...");
             DeviceScanner ds = DeviceScanner.getInstance();
             Thread scan = new Thread(ds);
             try {
@@ -20,7 +21,6 @@ public class Application {
             } catch (InterruptedException e) {
                 System.out.println("Scan was interrupted.");
             }
-            ds.printDevices();
         }
     }
 
