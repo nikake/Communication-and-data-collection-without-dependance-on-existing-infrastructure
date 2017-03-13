@@ -10,7 +10,14 @@ public class DeviceScannerTest {
 
     @Before
     public void init() {
-        deviceScanner = new DeviceScanner();
+        deviceScanner = DeviceScanner.getInstance();
     }
+
+    @Test
+    public void thereShouldOnlyBeOneInstanceOfDeviceScanner() {
+        DeviceScanner testDC = DeviceScanner.getInstance();
+        assertEquals(true, deviceScanner == testDC);
+    }
+
 
 }
