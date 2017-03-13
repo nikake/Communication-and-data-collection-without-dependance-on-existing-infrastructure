@@ -20,7 +20,7 @@ public class Application {
             } catch (InterruptedException e) {
                 System.out.println("Scan was interrupted.");
             }
-            ds.getDevices();
+            ds.printDevices();
         }
     }
 
