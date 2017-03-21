@@ -3,7 +3,7 @@ package test.java;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-import main.java.MachineID;
+import main.java.util.MachineID;
 
 public class MachineIDTest {
 
