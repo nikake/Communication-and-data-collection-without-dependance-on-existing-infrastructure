@@ -21,6 +21,10 @@ public class Application implements Runnable {
         host = null;
     }
 
+    public String[] getHostAddress() {
+        return new String[4];
+    }
+
     /*
         Run threads for DeviceScanner and PortListener.
      */
