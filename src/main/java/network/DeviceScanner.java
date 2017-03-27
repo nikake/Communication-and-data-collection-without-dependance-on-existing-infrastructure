@@ -1,6 +1,7 @@
 package main.java.network;
 
 import main.java.util.Device;
+import main.java.Application;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -23,7 +24,6 @@ public class DeviceScanner implements Runnable {
         Scan for devices every 5 seconds and add them to the collection 'devices'.
      */
     private void scan() {
-
     }
 
     @Override
