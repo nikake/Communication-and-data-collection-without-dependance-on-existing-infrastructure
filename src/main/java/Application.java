@@ -10,12 +10,19 @@ import java.net.ServerSocket;
  */
 public class Application implements Runnable {
     public static final int HOST_PORT = 8000;
+    private static Application instance;
 
     private static ServerSocket host;
     private static boolean keepRunning = true;
 
-    public Application() {
+    private Application() {
         setHost();
+    }
+
+    public static Application getInstance() {
+        if(instance == null)
+            instance = new Application();
+        return instance;
     }
 
     private void setHost() {
@@ -62,7 +69,7 @@ public class Application implements Runnable {
     }
 
     public static void main(String[] args) {
-        Application app = new Application();
+        Application app = Application.getInstance();
         app.run();
     }
 }

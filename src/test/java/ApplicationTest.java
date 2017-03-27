@@ -12,7 +12,7 @@ public class ApplicationTest {
 
     @Before
     public void init() {
-        application = new Application();
+        application = Application.getInstance();
     }
 
     @After
@@ -22,7 +22,7 @@ public class ApplicationTest {
 
     @Test
     public void initApplication() {
-        new Application();
+        Application.getInstance();
     }
 
     @Test
