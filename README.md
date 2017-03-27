@@ -1,4 +1,4 @@
-# Simulation-of-Distributed-task-allocation-for-Unmanned-Aerial-Vehicle-UAV-
+# Communication and data collection without dependance on existing infrastructure
 
 This project is the development part of an artefact for the bachelor of science thesis for Niklas Åkerlund and Filip Lindvall at the Department of Computer and System Sciences (DSV), Stockholm Universtity.
 
