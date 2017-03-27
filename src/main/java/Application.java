@@ -58,10 +58,6 @@ public class Application implements Runnable {
         return host.getInetAddress().getHostAddress().split("\\.");
     }
 
-    public int getHostPort() {
-        return HOST_PORT;
-    }
-
     public void close() {
         keepRunning = false;
     }
