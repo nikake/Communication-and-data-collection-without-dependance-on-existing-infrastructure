@@ -13,4 +13,9 @@ public class Device {
     public Device() {
 
     }
+
+    public String getIp(){
+        return deviceSocket.getInetAddress().getHostAddress();
+    }
+
 }
