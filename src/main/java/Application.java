@@ -1,16 +1,24 @@
 package main.java;
 
+import log.LogWriter;
+import log.Logger;
 import main.java.network.DeviceScanner;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.io.File;
 
 /**
  * The main class of the application.
  */
 public class Application implements Runnable {
+
+    private File logFile = new File("./Log/App.log");
+    private boolean logAppend = true;
+    private Logger log;
+
     public static final int HOST_PORT = 8000;
     private static Application instance;
 
@@ -66,6 +74,8 @@ public class Application implements Runnable {
         Run threads for DeviceScanner and PortListener.
      */
     public void run() {
+        startLogger();
+        log.info("Starting up!");
         try {
             while (keepRunning) {
                 DeviceScanner ds = DeviceScanner.getInstance();
@@ -86,6 +96,15 @@ public class Application implements Runnable {
                 System.out.println("Error closing down Application: " + e);
             }
         }
+    }
+
+    private void startLogger() {
+        LogWriter.setLogFile(logFile);
+        LogWriter.setAppend(logAppend);
+        LogWriter lw = LogWriter.getInstance();
+        if (lw != null)
+            new Thread(lw).start();
+        log = Logger.getLogger(this.getClass().getSimpleName());
     }
 
     public static void main(String[] args) {
