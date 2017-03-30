@@ -1,10 +1,10 @@
-package log;
+package main.java.log;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
-import log.Logger.LogLineStorage;
-import util.FileUtil;
+import main.java.log.Logger.LogLineStorage;
+import main.java.util.FileUtil;
 
 public class LogWriter implements Runnable {
 

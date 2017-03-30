@@ -1,7 +1,7 @@
 package main.java;
 
-import log.LogWriter;
-import log.Logger;
+import main.java.log.LogWriter;
+import main.java.log.Logger;
 import main.java.network.DeviceScanner;
 
 import java.net.InetAddress;
