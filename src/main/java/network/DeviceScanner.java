@@ -10,10 +10,10 @@ import java.net.Socket;
 
 public class DeviceScanner implements Runnable {
 
-    private CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<Device>();
+    private CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
     private static DeviceScanner instance = null;
     private final int MAX_TIMEOUT = 50;
-    private ArrayList<Integer> knownIPs = new ArrayList<Integer>();
+    private ArrayList<Integer> knownIPs = new ArrayList<>();
 
     private DeviceScanner() {
 

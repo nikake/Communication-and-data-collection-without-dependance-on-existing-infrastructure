@@ -13,6 +13,8 @@
                             <addClasspath>true</addClasspath>
                             <mainClass>main.java.Application</mainClass>
                         </manifest>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </archive>
                 </configuration>
             </plugin>
