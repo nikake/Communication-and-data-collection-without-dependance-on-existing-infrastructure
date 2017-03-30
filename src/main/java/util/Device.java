@@ -18,4 +18,8 @@ public class Device {
         return deviceSocket.getInetAddress().getHostAddress();
     }
 
+    public String[] getIpArray() {
+        return deviceSocket.getInetAddress().getHostAddress().split("\\.");
+    }
+
 }
