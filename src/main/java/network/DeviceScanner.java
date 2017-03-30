@@ -55,6 +55,10 @@ public class DeviceScanner implements Runnable {
 
     }
 
+    public CopyOnWriteArrayList getDevices(){
+        return devices;
+    }
+
     @Override
     public void run() {
         scan();
