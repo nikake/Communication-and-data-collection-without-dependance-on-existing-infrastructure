@@ -3,10 +3,13 @@ package main.java;
 import main.java.log.LogWriter;
 import main.java.log.Logger;
 import main.java.network.DeviceScanner;
+import main.java.network.SignalHandler;
+import main.java.util.Device;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.NetworkInterface;
+import java.net.Socket;
 import java.util.Enumeration;
 import java.io.File;
 
@@ -78,6 +81,8 @@ public class Application implements Runnable {
         log.info("Starting up!");
         try {
             while (keepRunning) {
+                log.info("Reading Signals");
+                new SignalHandler(new Device(new Socket()), "").getSignalStrength();
                 DeviceScanner ds = DeviceScanner.getInstance();
                 Thread scan = new Thread(ds);
                 try {
