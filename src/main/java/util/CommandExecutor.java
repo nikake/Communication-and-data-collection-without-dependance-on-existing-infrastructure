@@ -34,7 +34,6 @@ public class CommandExecutor {
         BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
         String line;
         while((line = br.readLine()) != null) {
-            System.out.println("Adding line: " + line.trim());
             data.append(line.trim() + "\n");
         }
         return data.toString();
