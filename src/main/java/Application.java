@@ -23,6 +23,7 @@ public class Application implements Runnable {
     private Logger log;
 
     public static final int HOST_PORT = 8000;
+    private static String macAddress;
     private static Application instance;
 
     private static ServerSocket host;
@@ -42,10 +43,10 @@ public class Application implements Runnable {
         String localAddress = "";
         try {
             Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
+
             while(e.hasMoreElements()){
                 NetworkInterface ni = e.nextElement();
                 Enumeration<InetAddress> inetAddresses = ni.getInetAddresses();
-
                 if(ni.getName().equals("wlan0")){
                     while(inetAddresses.hasMoreElements()){
                         InetAddress ia = inetAddresses.nextElement();
@@ -60,6 +61,7 @@ public class Application implements Runnable {
         }
         try {
             host = new ServerSocket(HOST_PORT, 50, InetAddress.getByName(localAddress));
+            setMacAddress(InetAddress.getByName(localAddress));
         } catch (Exception e) {
             System.out.println("Error setting host: " + e);
         }
@@ -110,6 +112,21 @@ public class Application implements Runnable {
         if (lw != null)
             new Thread(lw).start();
         log = Logger.getLogger(this.getClass().getSimpleName());
+    }
+
+    private void setMacAddress(InetAddress addr){
+        StringBuilder sb = new StringBuilder();
+        try {
+            NetworkInterface netInterface = NetworkInterface.getByInetAddress(addr);
+            byte[] mac = netInterface.getHardwareAddress();
+            for (int i = 0; i < mac.length; i++) {
+                sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
+            }
+        } catch (Exception e){
+            System.out.println(e);
+        }
+
+        macAddress = sb.toString();
     }
 
     public static void main(String[] args) {
