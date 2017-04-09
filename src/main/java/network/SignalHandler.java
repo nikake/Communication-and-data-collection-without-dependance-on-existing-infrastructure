@@ -27,14 +27,16 @@ public class SignalHandler {
 
     public int getSignalStrength() {
         String[] data = scan();
+        String[] deviceData = new String[3];
         for(int i = 0; i < data.length - 3; i++) {
             System.out.println("[" + data[i] + "]");
             if(data[i].equals("ESSID:\"RPiAdHocNetwork\"")) {
-                log.info(data[i]);
-                log.info(data[i+1]);
-                log.info(data[i+2]);
+                deviceData[0] = data[i];
+                deviceData[1] = data[i-1];
+                deviceData[2] = data[i+1];
             }
         }
+        log.info("Signal strength to " + deviceData[1].split("Address: ")[1] + ": " + deviceData[2].split("Signal level=")[1]);
         return 0;
     }
 }
