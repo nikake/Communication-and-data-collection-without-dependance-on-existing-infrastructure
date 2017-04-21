@@ -118,6 +118,7 @@ public class Application implements Runnable {
     }
 
     private void setMacAddress(InetAddress addr){
+        log.info("Aquiring network interface MAC-address");
         StringBuilder sb = new StringBuilder();
         try {
             NetworkInterface netInterface = NetworkInterface.getByInetAddress(addr);
@@ -133,6 +134,7 @@ public class Application implements Runnable {
     }
 
     private void setBtMacAddress(){
+        log.info("Aquiring Bluetooth MAC-address");
         CommandExecutor c = new CommandExecutor();
         String[] results = c.execute("hcitool dev".split("\\s+"));
         for (String s : results) {
