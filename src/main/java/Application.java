@@ -5,6 +5,7 @@ import main.java.log.Logger;
 import main.java.network.DeviceScanner;
 import main.java.network.SignalHandler;
 import main.java.util.Device;
+import main.java.util.CommandExecutor;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -23,6 +24,7 @@ public class Application implements Runnable {
     private Logger log;
 
     public static final int HOST_PORT = 8000;
+    public static String btMacAddress;
     private static String macAddress;
     private static Application instance;
 
@@ -31,6 +33,7 @@ public class Application implements Runnable {
 
     private Application() {
         setHost();
+        setBtMacAddress();
     }
 
     public static Application getInstance() {
@@ -84,7 +87,7 @@ public class Application implements Runnable {
         try {
             while (keepRunning) {
                 log.info("Reading Signals");
-                new SignalHandler(new Device(new Socket()), "").getSignalStrength();
+                //new SignalHandler(new Device(new Socket()), "").getSignalStrength();
                 DeviceScanner ds = DeviceScanner.getInstance();
                 Thread scan = new Thread(ds);
                 try {
@@ -127,6 +130,16 @@ public class Application implements Runnable {
         }
 
         macAddress = sb.toString();
+    }
+
+    private void setBtMacAddress(){
+        CommandExecutor c = new CommandExecutor();
+        String[] results = c.execute("hcitool dev".split("\\s+"));
+        for (String s : results) {
+            if (s.contains("hci0")) {
+                btMacAddress = s.split("\\s+")[1];
+            }
+        }
     }
 
     public static void main(String[] args) {
