@@ -32,6 +32,7 @@ public class Application implements Runnable {
     private static boolean keepRunning = true;
 
     private Application() {
+        startLogger();
         setHost();
         setBtMacAddress();
     }
@@ -82,8 +83,6 @@ public class Application implements Runnable {
         Run threads for DeviceScanner and PortListener.
      */
     public void run() {
-        startLogger();
-        log.info("Starting up!");
         try {
             while (keepRunning) {
                 log.info("Reading Signals");
@@ -115,6 +114,7 @@ public class Application implements Runnable {
         if (lw != null)
             new Thread(lw).start();
         log = Logger.getLogger(this.getClass().getSimpleName());
+        log.info("Starting up!");
     }
 
     private void setMacAddress(InetAddress addr){
