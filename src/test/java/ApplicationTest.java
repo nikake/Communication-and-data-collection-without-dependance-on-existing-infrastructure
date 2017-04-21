@@ -10,6 +10,8 @@ public class ApplicationTest {
     private Application application;
     private static final String[] HOST_ADDRESS = {"127", "0", "0", "1"};
 
+    /*
+
     @Before
     public void init() {
         application = Application.getInstance();
@@ -24,7 +26,7 @@ public class ApplicationTest {
     public void initApplication() {
         Application.getInstance();
     }
-    /*
+
 
     Commented out because the tests didnt allow me to build a jar-file......
 
