@@ -24,7 +24,7 @@ public class Application implements Runnable {
     private Logger log;
 
     public static final int HOST_PORT = 8000;
-    public static String btMacAddress;
+    private static String btMacAddress;
     private static String macAddress;
     private static Application instance;
 
@@ -72,6 +72,10 @@ public class Application implements Runnable {
 
     public String[] getHostAddress() {
         return host.getInetAddress().getHostAddress().split("\\.");
+    }
+
+    public String getBtMacAddress() {
+        return btMacAddress;
     }
 
     public void close() {
