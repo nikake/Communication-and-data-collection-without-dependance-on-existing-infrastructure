@@ -23,6 +23,7 @@ public class RemoteClient implements Runnable {
         try {
             host = new Socket(hostIp, hostPort);
             Logger.info("Connected to remote host with IP: " + host.getRemoteSocketAddress());
+            System.out.println("Connected to remote host with IP: " + host.getRemoteSocketAddress());
 
             ObjectOutputStream oos = new ObjectOutputStream(host.getOutputStream());
             oos.writeObject(Application.getLocalDevice());

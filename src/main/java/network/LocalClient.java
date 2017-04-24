@@ -30,6 +30,7 @@ public class LocalClient implements Runnable {
                 }
             } while (clientDevice == null);
             Logger.info("Communication with new device established. New device: " + clientDevice);
+            System.out.println("Communication with new device established. New device: " + clientDevice);
             // Add clientDevice to collection
 
             //Read messages from client

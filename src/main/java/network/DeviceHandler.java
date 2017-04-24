@@ -39,10 +39,11 @@ public class DeviceHandler implements Runnable {
         if(foundDevices.isEmpty()){
             foundDevices = deviceScanner.scan();
             for(String s : foundDevices){
+                Logger.info("Found new device: " + s + " Attempting to connect");
                 try{
                     RemoteClient rc = new RemoteClient(s, Application.HOST_PORT);
                     Thread remote = new Thread(rc);
-                    remote.run();;
+                    remote.start();
                 } catch (Exception e){
                     Logger.error("");
                 }
