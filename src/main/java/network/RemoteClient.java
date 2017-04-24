@@ -1,5 +1,6 @@
 package main.java.network;
 
+import main.java.Application;
 import main.java.log.Logger;
 import main.java.util.Device;
 
@@ -8,12 +9,10 @@ import java.net.Socket;
 
 public class RemoteClient implements Runnable {
 
-    private Device localDevice;
     private String hostIp;
     private int hostPort;
 
-    public RemoteClient(Device localDevice, String hostIp, int hostPort) {
-        this.localDevice = localDevice;
+    public RemoteClient(String hostIp, int hostPort) {
         this.hostIp = hostIp;
         this.hostPort = hostPort;
     }
@@ -26,7 +25,7 @@ public class RemoteClient implements Runnable {
             Logger.info("Connected to remote host with IP: " + host.getRemoteSocketAddress());
 
             ObjectOutputStream oos = new ObjectOutputStream(host.getOutputStream());
-            oos.writeObject(localDevice);
+            oos.writeObject(Application.getLocalDevice());
 
             while(true) {
                 Thread.sleep(1000);

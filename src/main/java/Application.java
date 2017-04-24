@@ -31,6 +31,10 @@ public class Application implements Runnable {
         return instance;
     }
 
+    public static Device getLocalDevice() {
+        return localDevice;
+    }
+
     private Device setHost() {
         String localAddress = "";
         try {
