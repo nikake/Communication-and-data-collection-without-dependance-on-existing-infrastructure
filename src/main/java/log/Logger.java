@@ -7,39 +7,38 @@ import java.text.SimpleDateFormat;
 
 public class Logger {
 
-	private LogWriter lw;
-	private String context;
+	private static LogWriter lw = LogWriter.getInstance();
+	private static String context;
 
 	private Logger(String context) {
 		this.context = context;
-		lw = LogWriter.getInstance();
 	}
 
 	public static Logger getLogger(String who) {
 		return new Logger(who);
 	}
 
-	public void debug(String toLog) {
+	public static void debug(String toLog) {
 		LogLineStorage lls = new LogLineStorage(toLog, LogLevel.DEBUG, System.currentTimeMillis(), context);
 		addToLog(lls);
 	}
 
-	public void error(String toLog) {
+	public static void error(String toLog) {
 		LogLineStorage lls = new LogLineStorage(toLog, LogLevel.ERROR, System.currentTimeMillis(), context);
 		addToLog(lls);
 	}
 
-	public void info(String toLog) {
+	public static void info(String toLog) {
 		LogLineStorage lls = new LogLineStorage(toLog, LogLevel.INFO, System.currentTimeMillis(), context);
 		addToLog(lls);
 	}
 
-	public void trace(String toLog) {
+	public static void trace(String toLog) {
 		LogLineStorage lls = new LogLineStorage(toLog, LogLevel.TRACE, System.currentTimeMillis(), context);
 		addToLog(lls);
 	}
 
-	public void exception(Exception e) {
+	public static void exception(Exception e) {
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
 		String exceptionAsString = sw.toString();
@@ -47,7 +46,7 @@ public class Logger {
 		addToLog(lls);
 	}
 
-	private void addToLog(LogLineStorage lls) {
+	private static void addToLog(LogLineStorage lls) {
 		if (lw != null)
 			lw.add(lls);
 	}
@@ -70,12 +69,12 @@ public class Logger {
 
 	// Log helper classes
 
-	private enum LogLevel {
+	private static enum LogLevel {
 		// Severity lowest down to highest
 		ERROR, INFO, DEBUG, EXCEPTION, TRACE
 	}
 
-	public class LogLineStorage implements Comparable<LogLineStorage> {
+	public static class LogLineStorage implements Comparable<LogLineStorage> {
 		private String toLog;
 		private LogLevel lvl;
 		private long time;

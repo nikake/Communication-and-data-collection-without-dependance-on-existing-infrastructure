@@ -19,10 +19,6 @@ import java.io.File;
  */
 public class Application implements Runnable {
 
-    private File logFile = new File("./Log/App.log");
-    private boolean logAppend = true;
-    private Logger log;
-
     public static final int HOST_PORT = 8000;
     public static String btMacAddress;
     private static String macAddress;
@@ -32,7 +28,6 @@ public class Application implements Runnable {
     private static boolean keepRunning = true;
 
     private Application() {
-        startLogger();
         setHost();
         setBtMacAddress();
     }
@@ -85,7 +80,6 @@ public class Application implements Runnable {
     public void run() {
         try {
             while (keepRunning) {
-                log.info("Reading Signals");
                 //new SignalHandler(new Device(new Socket()), "").getSignalStrength();
                 DeviceScanner ds = DeviceScanner.getInstance();
                 Thread scan = new Thread(ds);
@@ -107,18 +101,7 @@ public class Application implements Runnable {
         }
     }
 
-    private void startLogger() {
-        LogWriter.setLogFile(logFile);
-        LogWriter.setAppend(logAppend);
-        LogWriter lw = LogWriter.getInstance();
-        if (lw != null)
-            new Thread(lw).start();
-        log = Logger.getLogger(this.getClass().getSimpleName());
-        log.info("Starting up!");
-    }
-
     private void setMacAddress(InetAddress addr){
-        log.info("Aquiring network interface MAC-address");
         StringBuilder sb = new StringBuilder();
         try {
             NetworkInterface netInterface = NetworkInterface.getByInetAddress(addr);
@@ -134,7 +117,6 @@ public class Application implements Runnable {
     }
 
     private void setBtMacAddress(){
-        log.info("Aquiring Bluetooth MAC-address");
         CommandExecutor c = new CommandExecutor();
         String[] results = c.execute("hcitool dev".split("\\s+"));
         for (String s : results) {
