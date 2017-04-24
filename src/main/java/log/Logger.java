@@ -9,13 +9,15 @@ public class Logger {
 
 	private static LogWriter lw = LogWriter.getInstance();
 	private static String context;
+	private static Logger instance = new Logger("Logger");
 
 	private Logger(String context) {
 		this.context = context;
+		System.out.println("Logger activated!!!!");
 	}
 
-	public static Logger getLogger(String who) {
-		return new Logger(who);
+	public static Logger getLogger() {
+		return instance;
 	}
 
 	public static void debug(String toLog) {

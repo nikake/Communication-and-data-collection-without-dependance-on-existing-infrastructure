@@ -25,6 +25,7 @@ public class Application implements Runnable {
     private static boolean keepRunning = true;
 
     private Application() {
+        Logger l = Logger.getLogger();
         localDevice = setHost();
     }
 

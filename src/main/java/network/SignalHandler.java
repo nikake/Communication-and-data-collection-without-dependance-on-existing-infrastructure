@@ -13,7 +13,6 @@ public class SignalHandler {
     };
     private final Device device;
     private final String iNetAddress;
-    private Logger log = Logger.getLogger(this.getClass().getSimpleName());
 
     public SignalHandler(Device device, String iNetAddress) {
         this.device = device;
@@ -36,7 +35,6 @@ public class SignalHandler {
                 deviceData[2] = data[i+1];
             }
         }
-        log.info("Signal strength to " + deviceData[1].split("Address: ")[1] + ": " + deviceData[2].split("Signal level=")[1]);
         return 0;
     }
 }
