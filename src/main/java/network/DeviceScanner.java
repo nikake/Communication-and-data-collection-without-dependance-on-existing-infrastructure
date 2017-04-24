@@ -5,8 +5,6 @@ import main.java.Application;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.net.Socket;
 
 public class DeviceScanner {
 
@@ -29,7 +27,6 @@ public class DeviceScanner {
             try {
                 InetAddress addr = InetAddress.getByName(subnet[0] + "." + subnet[1] + "." + subnet[2] + "." + subnet[3]);
                 if (!foundDevices.contains(i) && !subnet[3].equals(Application.getInstance().getHostAddress()[3]) && addr.isReachable(MAX_TIMEOUT)){
-                    //devices.add(new Device(new Socket(addr, Application.getInstance().HOST_PORT)));
                     foundDevices.add(addr.getHostAddress());
                 }
 
