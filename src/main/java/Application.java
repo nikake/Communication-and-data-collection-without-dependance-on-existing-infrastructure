@@ -1,18 +1,13 @@
 package main.java;
 
-import main.java.log.LogWriter;
-import main.java.log.Logger;
 import main.java.network.DeviceScanner;
-import main.java.network.SignalHandler;
 import main.java.util.Device;
 import main.java.util.CommandExecutor;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.NetworkInterface;
-import java.net.Socket;
 import java.util.Enumeration;
-import java.io.File;
 
 /**
  * The main class of the application.
@@ -20,16 +15,14 @@ import java.io.File;
 public class Application implements Runnable {
 
     public static final int HOST_PORT = 8000;
-    public static String btMacAddress;
-    private static String macAddress;
     private static Application instance;
+    private static Device localDevice;
 
     private static ServerSocket host;
     private static boolean keepRunning = true;
 
     private Application() {
-        setHost();
-        setBtMacAddress();
+        localDevice = setHost();
     }
 
     public static Application getInstance() {
@@ -38,7 +31,7 @@ public class Application implements Runnable {
         return instance;
     }
 
-    private void setHost() {
+    private Device setHost() {
         String localAddress = "";
         try {
             Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
@@ -58,12 +51,14 @@ public class Application implements Runnable {
         } catch(Exception e) {
             System.out.println(e);
         }
+
         try {
-            host = new ServerSocket(HOST_PORT, 50, InetAddress.getByName(localAddress));
-            setMacAddress(InetAddress.getByName(localAddress));
-        } catch (Exception e) {
-            System.out.println("Error setting host: " + e);
+            return new Device(localAddress, setMacAddress(InetAddress.getByName(localAddress)), setBtMacAddress());
+        } catch (Exception e){
+            e.printStackTrace();
         }
+
+        return null;
     }
 
     public String[] getHostAddress() {
@@ -101,7 +96,7 @@ public class Application implements Runnable {
         }
     }
 
-    private void setMacAddress(InetAddress addr){
+    private String setMacAddress(InetAddress addr){
         StringBuilder sb = new StringBuilder();
         try {
             NetworkInterface netInterface = NetworkInterface.getByInetAddress(addr);
@@ -113,17 +108,18 @@ public class Application implements Runnable {
             System.out.println(e);
         }
 
-        macAddress = sb.toString();
+        return sb.toString();
     }
 
-    private void setBtMacAddress(){
+    private String setBtMacAddress(){
         CommandExecutor c = new CommandExecutor();
         String[] results = c.execute("hcitool dev".split("\\s+"));
         for (String s : results) {
             if (s.contains("hci0")) {
-                btMacAddress = s.split("\\s+")[1];
+                return s.split("\\s+")[1];
             }
         }
+        return "";
     }
 
     public static void main(String[] args) {
