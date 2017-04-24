@@ -1,25 +1,15 @@
 package main.java.util;
 
-import java.net.Socket;
-
 public class Device {
 
-    private Socket deviceSocket = null;
+    public final String ipAddress;
+    public final String hwAddress;
+    public final String btAddress;
 
-    public Device(Socket deviceSocket) {
-        this.deviceSocket = deviceSocket;
-    }
-
-    public Device() {
-
-    }
-
-    public String getIp(){
-        return deviceSocket.getInetAddress().getHostAddress();
-    }
-
-    public String[] getIpArray() {
-        return deviceSocket.getInetAddress().getHostAddress().split("\\.");
+    public Device(String ipAddress, String hwAddress, String btAddress) {
+        this.ipAddress = ipAddress;
+        this.hwAddress = hwAddress;
+        this.btAddress = btAddress;
     }
 
 }
