@@ -2,10 +2,10 @@ package main.java;
 
 import main.java.log.LogWriter;
 import main.java.log.Logger;
-import main.java.network.DeviceScanner;
 import main.java.network.SignalHandler;
 import main.java.util.Device;
 import main.java.util.CommandExecutor;
+import network.DeviceHandler;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -87,8 +87,8 @@ public class Application implements Runnable {
             while (keepRunning) {
                 log.info("Reading Signals");
                 //new SignalHandler(new Device(new Socket()), "").getSignalStrength();
-                DeviceScanner ds = DeviceScanner.getInstance();
-                Thread scan = new Thread(ds);
+                DeviceHandler dh = DeviceHandler.getInstance();
+                Thread scan = new Thread(dh);
                 try {
                     scan.start();
                     scan.join();

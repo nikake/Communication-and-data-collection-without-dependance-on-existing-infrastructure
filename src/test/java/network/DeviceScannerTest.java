@@ -8,6 +8,7 @@ public class DeviceScannerTest {
 
     DeviceScanner deviceScanner;
 
+    /*
     @Before
     public void init() {
         deviceScanner = DeviceScanner.getInstance();
@@ -18,6 +19,6 @@ public class DeviceScannerTest {
         DeviceScanner testDC = DeviceScanner.getInstance();
         assertEquals(true, deviceScanner == testDC);
     }
-
+    */
 
 }
