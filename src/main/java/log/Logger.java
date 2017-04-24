@@ -10,12 +10,16 @@ public class Logger {
 	private static LogWriter lw = LogWriter.getInstance();
 	private static String context;
 
+	private static class LoggerHolder {
+		public static Logger logger = new Logger("Logger");
+	}
+
 	private Logger(String context) {
 		this.context = context;
 	}
 
 	public static Logger getLogger(String who) {
-		return new Logger(who);
+		return LoggerHolder.logger;
 	}
 
 	public static void debug(String toLog) {
@@ -50,24 +54,6 @@ public class Logger {
 		if (lw != null)
 			lw.add(lls);
 	}
-
-	// private void writeToLog(String toLog,LogLevel lvl, long
-	// currentTime,String who){
-	// if(logFile == null)
-	// return;
-	//
-	// Date time = new Date(currentTime);
-	//
-	// String output = "["+time+"] "+who+" "+lvl +" # "+toLog;
-	//
-	// try {
-	// FileUtil.writeToFile(output, logFile);
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-
-	// Log helper classes
 
 	private static enum LogLevel {
 		// Severity lowest down to highest
