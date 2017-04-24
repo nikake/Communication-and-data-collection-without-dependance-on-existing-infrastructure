@@ -18,7 +18,9 @@ public class DeviceServer implements Runnable {
 
     private static DeviceServer instance = new DeviceServer();
 
-    public DeviceServer getInstance(){
+    private DeviceServer(){}
+
+    public static DeviceServer getInstance(){
         return instance;
     }
 

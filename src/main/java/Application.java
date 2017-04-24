@@ -1,8 +1,11 @@
 package main.java;
 
+import main.java.log.Logger;
 import main.java.network.DeviceHandler;
+import main.java.network.DeviceServer;
 import main.java.util.Device;
 import main.java.util.CommandExecutor;
+import org.junit.internal.runners.model.EachTestNotifier;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -77,24 +80,20 @@ public class Application implements Runnable {
         Run threads for DeviceScanner and PortListener.
      */
     public void run() {
-        try {
-            while (keepRunning) {
-                DeviceHandler dh = DeviceHandler.getInstance();
-                Thread scan = new Thread(dh);
-                try {
-                    scan.start();
-                    scan.join();
-                } catch (InterruptedException e) {
-                    System.out.println("Scan was interrupted.");
-                }
-            }
-        } finally {
-            try {
-                if (host != null)
-                    host.close();
-            } catch (Exception e) {
-                System.out.println("Error closing down Application: " + e);
-            }
+        try{
+            DeviceServer ds = DeviceServer.getInstance();
+            Thread server = new Thread(ds);
+            server.run();
+        } catch (Exception e){
+            Logger.error("Could not start DeviceServer.\n\n" + e.getMessage());
+        }
+
+        try{
+            DeviceHandler dh = DeviceHandler.getInstance();
+            Thread handler = new Thread(dh);
+            handler.run();
+        } catch (Exception e){
+            Logger.error("Could not start DeviceHandler.\n\n" + e.getMessage());
         }
     }
 
