@@ -2,7 +2,6 @@ package main.java.network;
 
 import main.java.util.Device;
 import main.java.Application;
-
 import java.net.InetAddress;
 import java.util.ArrayList;
 
