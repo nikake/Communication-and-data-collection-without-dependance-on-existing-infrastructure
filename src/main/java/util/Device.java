@@ -15,4 +15,11 @@ public class Device {
     public String toString() {
         return "{ ipAddress: " + ipAddress + ", hwAddress: " + hwAddress + ", btAddress " + btAddress + "}";
     }
+
+    public boolean equals(Object o){
+        if(o instanceof Device)
+            return hwAddress.equals(((Device) o).hwAddress);
+        return false;
+    }
+
 }
