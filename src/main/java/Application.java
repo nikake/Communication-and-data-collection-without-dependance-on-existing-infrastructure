@@ -1,6 +1,6 @@
 package main.java;
 
-import main.java.network.DeviceScanner;
+import main.java.network.DeviceHandler;
 import main.java.util.Device;
 import main.java.util.CommandExecutor;
 
@@ -75,16 +75,14 @@ public class Application implements Runnable {
     public void run() {
         try {
             while (keepRunning) {
-                //new SignalHandler(new Device(new Socket()), "").getSignalStrength();
-                DeviceScanner ds = DeviceScanner.getInstance();
-                Thread scan = new Thread(ds);
+                DeviceHandler dh = DeviceHandler.getInstance();
+                Thread scan = new Thread(dh);
                 try {
                     scan.start();
                     scan.join();
                 } catch (InterruptedException e) {
                     System.out.println("Scan was interrupted.");
                 }
-                //ds.printDevices();
             }
         } finally {
             try {
