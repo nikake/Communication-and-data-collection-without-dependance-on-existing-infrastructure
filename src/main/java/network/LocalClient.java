@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-public class DeviceClient implements Runnable {
+public class LocalClient implements Runnable {
 
     private Socket client;
 
-    public DeviceClient(Socket client) {
+    public LocalClient(Socket client) {
         this.client = client;
     }
 

@@ -47,7 +47,7 @@ public class DeviceServer implements Runnable {
             while(true){
                 client = host.accept();
                 Logger.info("Accepted socket from new device: IP:" + client.getLocalSocketAddress() + ".");
-                POOL.execute(new DeviceClient(client));
+                POOL.execute(new LocalClient(client));
             }
         } catch(Exception e){
             Logger.error("Error while running DeviceServer.\n\n" + e.getMessage());
