@@ -1,17 +1,13 @@
 package main.java.network;
 
 import main.java.util.Device;
-import main.java.network.DeviceScanner;
-
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-import java.net.Socket;
-
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DeviceHandler implements Runnable {
 
+    private static CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
     private static DeviceHandler instance = null;
-    private ConcurrentHashMap<Socket, Device> devices = new ConcurrentHashMap<Socket, Device>();
     private DeviceScanner deviceScanner = new DeviceScanner();
 
     private DeviceHandler() {
@@ -22,6 +18,18 @@ public class DeviceHandler implements Runnable {
         if (instance == null)
             instance = new DeviceHandler();
         return instance;
+    }
+
+    public void addDevice(Device device){
+        devices.add(device);
+    }
+
+    public boolean removeDevice(Device device){
+        return devices.remove(device);
+    }
+
+    public boolean deviceExists(Device device){
+        return devices.contains(device);
     }
 
     public void run(){
