@@ -1,5 +1,7 @@
 package main.java.network;
 
+import main.java.Application;
+import main.java.log.Logger;
 import main.java.util.Device;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -9,6 +11,7 @@ public class DeviceHandler implements Runnable {
     private static CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
     private static DeviceHandler instance = null;
     private DeviceScanner deviceScanner = new DeviceScanner();
+    private static ArrayList<String> foundDevices = new ArrayList<>();
 
     private DeviceHandler() {
 
@@ -33,10 +36,16 @@ public class DeviceHandler implements Runnable {
     }
 
     public void run(){
-        if(devices.isEmpty()){
-            ArrayList<String> foundDevices = deviceScanner.scan();
+        if(foundDevices.isEmpty()){
+            foundDevices = deviceScanner.scan();
             for(String s : foundDevices){
-                System.out.println(s);
+                try{
+                    RemoteClient rc = new RemoteClient(s, Application.HOST_PORT);
+                    Thread remote = new Thread(rc);
+                    remote.run();;
+                } catch (Exception e){
+                    Logger.error("");
+                }
             }
             if(foundDevices.isEmpty()){
                 System.out.println("No devices found");
