@@ -1,14 +1,18 @@
 package main.java.network;
 
 import main.java.util.Device;
+import main.java.network.DeviceScanner;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.net.Socket;
 
 
 public class DeviceHandler implements Runnable {
 
     private static DeviceHandler instance = null;
-    private ConcurrentHashMap<String, Device> devices = new ConcurrentHashMap<String, Device>();
+    private ConcurrentHashMap<Socket, Device> devices = new ConcurrentHashMap<Socket, Device>();
+    private DeviceScanner deviceScanner = new DeviceScanner();
 
     private DeviceHandler() {
 
@@ -21,7 +25,15 @@ public class DeviceHandler implements Runnable {
     }
 
     public void run(){
-        //// TODO: 2017-04-22
+        if(devices.isEmpty()){
+            ArrayList<String> foundDevices = deviceScanner.scan();
+            for(String s : foundDevices){
+                System.out.println(s);
+            }
+            if(foundDevices.isEmpty()){
+                System.out.println("No devices found");
+            }
+        }
     }
 
 }
