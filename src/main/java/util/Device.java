@@ -12,4 +12,7 @@ public class Device {
         this.btAddress = btAddress;
     }
 
+    public String toString() {
+        return "{ ipAddress: " + ipAddress + ", hwAddress: " + hwAddress + ", btAddress " + btAddress + "}";
+    }
 }
