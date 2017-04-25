@@ -4,14 +4,14 @@ import main.java.Application;
 import main.java.log.Logger;
 import main.java.util.Device;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DeviceHandler implements Runnable {
 
-    private static CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
+    private static ConcurrentHashMap<String, Device> devices = new ConcurrentHashMap<>();
     private static DeviceHandler instance = null;
     private DeviceScanner deviceScanner = new DeviceScanner();
-    private static ArrayList<String> foundDevices = new ArrayList<>();
+    private boolean updated = false;
 
     private DeviceHandler() {
 
@@ -23,35 +23,56 @@ public class DeviceHandler implements Runnable {
         return instance;
     }
 
-    public void addDevice(Device device){
-        devices.add(device);
+    public void addDevice(String ip, Device device){
+        Logger.info("Added device: " + device);
+        devices.put(ip, device);
     }
 
-    public boolean removeDevice(Device device){
-        return devices.remove(device);
+    public Device removeDevice(String ip){
+        Device removedDevice = devices.remove(ip);
+        Logger.info("Removed device: " + removedDevice);
+        return removedDevice;
     }
 
-    public boolean deviceExists(Device device){
-        return devices.contains(device);
+    public boolean deviceExists(String ip){
+        return devices.containsKey(ip);
     }
 
-    public void run(){
-        if(foundDevices.isEmpty()){
-            foundDevices = deviceScanner.scan();
-            for(String s : foundDevices){
-                Logger.info("Found new device: " + s + " Attempting to connect");
+    public void updateDevices(ArrayList<String> foundIps){
+        System.out.println("Updating devices");
+        updated = false;
+        for(String ip : foundIps){
+            if(!deviceExists(ip)){
                 try{
-                    RemoteClient rc = new RemoteClient(s, Application.HOST_PORT);
+                    RemoteClient rc = new RemoteClient(ip, Application.HOST_PORT);
                     Thread remote = new Thread(rc);
                     remote.start();
+                    Device d = rc.getHostDevice();
+                    if(!d.equals(Application.NULL_DEVICE)) {
+                        addDevice(ip, rc.getHostDevice());
+                        updated = true;
+                    }
                 } catch (Exception e){
                     Logger.error("");
                 }
             }
-            if(foundDevices.isEmpty()){
-                System.out.println("No devices found");
-            }
         }
+        devices.forEach((String ip, Device d) -> {
+            if(!foundIps.contains(ip)) {
+                removeDevice(ip);
+                updated = true;
+            }
+        });
+        if(updated) {
+            Logger.info("Device list updated: ");
+            devices.forEach((String ip, Device d) -> Logger.info(d.toString()));
+        }
+    }
+
+    public void run(){
+        //Kör scan, populera devices med nya ips som får värde null. Samt ta bort ips som inte längre fångas upp.
+        while(true)
+            updateDevices(deviceScanner.scan());
     }
 
 }
