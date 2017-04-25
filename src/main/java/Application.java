@@ -16,6 +16,7 @@ import java.util.Enumeration;
  */
 public class Application implements Runnable {
 
+    public static final Device NULL_DEVICE = new Device("dummy", "dummy", "dummy");
     public static final int HOST_PORT = 8000;
     private static Application instance;
     private static Device localDevice;
