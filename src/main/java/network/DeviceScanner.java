@@ -1,6 +1,5 @@
 package main.java.network;
 
-import main.java.util.Device;
 import main.java.Application;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -8,7 +7,7 @@ import java.util.ArrayList;
 public class DeviceScanner {
 
     private final int MAX_TIMEOUT = 50;
-    private ArrayList<String> foundDevices = new ArrayList<>();
+    private ArrayList<String> foundDevices;
 
     public DeviceScanner() {
 
@@ -19,6 +18,7 @@ public class DeviceScanner {
         This should be refactored and changed to future....in the future.
      */
     public ArrayList<String> scan() {
+        foundDevices = new ArrayList<>();
         String[] subnet = Application.getInstance().getHostAddress();
 
         for (int i = 0; i < 256; i++) {
