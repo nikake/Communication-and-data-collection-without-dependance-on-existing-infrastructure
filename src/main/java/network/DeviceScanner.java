@@ -40,6 +40,7 @@ public class DeviceScanner {
     public ArrayList<String> scan() {
         System.out.println("DeviceScanner: Before parallel!");
         addresses.parallelStream().forEach(addr -> {
+            System.out.println("Running scan for address: " + addr.getHostAddress());
             try {
                 if (!foundDevices.contains(addr) && addr.isReachable(MAX_TIMEOUT))
                     foundDevices.add(addr.getHostAddress());
