@@ -8,7 +8,7 @@ import main.java.util.FileUtil;
 
 public class LogWriter implements Runnable {
 
-	private static File logFileStatic;
+	private static File logFileStatic = new File("./Log/App.log");
 	private static boolean append = true;
 
 	private static class LogWriterHolder {

@@ -1,25 +1,27 @@
 package main.java.util;
 
-import java.net.Socket;
+import java.io.Serializable;
 
-public class Device {
+public class Device implements Serializable {
 
-    private Socket deviceSocket = null;
+    public final String ipAddress;
+    public final String hwAddress;
+    public final String btAddress;
 
-    public Device(Socket deviceSocket) {
-        this.deviceSocket = deviceSocket;
+    public Device(String ipAddress, String hwAddress, String btAddress) {
+        this.ipAddress = ipAddress;
+        this.hwAddress = hwAddress;
+        this.btAddress = btAddress;
     }
 
-    public Device() {
-
+    public String toString() {
+        return "{ ipAddress: " + ipAddress + ", hwAddress: " + hwAddress + ", btAddress " + btAddress + "}";
     }
 
-    public String getIp(){
-        return deviceSocket.getInetAddress().getHostAddress();
-    }
-
-    public String[] getIpArray() {
-        return deviceSocket.getInetAddress().getHostAddress().split("\\.");
+    public boolean equals(Object o){
+        if(o instanceof Device)
+            return hwAddress.equals(((Device) o).hwAddress);
+        return false;
     }
 
 }
