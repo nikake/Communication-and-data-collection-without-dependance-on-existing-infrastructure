@@ -41,7 +41,7 @@ public class DeviceHandler implements Runnable {
     public void updateDevices(ArrayList<String> foundIps){
         System.out.println("Updating devices");
         updated = false;
-        for(String ip : foundIps){
+        foundIps.parallelStream().forEach(ip -> {
             if(!deviceExists(ip)){
                 try{
                     RemoteClient rc = new RemoteClient(ip, Application.HOST_PORT);
@@ -56,7 +56,7 @@ public class DeviceHandler implements Runnable {
                     Logger.error("");
                 }
             }
-        }
+        });
         devices.forEach((String ip, Device d) -> {
             if(!foundIps.contains(ip)) {
                 removeDevice(ip);
