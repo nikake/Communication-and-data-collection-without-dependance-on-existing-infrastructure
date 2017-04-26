@@ -38,14 +38,16 @@ public class DeviceScanner {
         Scan for devices every 50 (minimum) milliseconds and add them to the collection 'foundDevices' if it has not already been discovered and is reachable.
      */
     public ArrayList<String> scan() {
+        System.out.println("DeviceScanner: Before parallel!");
         addresses.parallelStream().forEach(addr -> {
             try {
                 if (!foundDevices.contains(addr) && addr.isReachable(MAX_TIMEOUT))
-                    foundDevices.add(addr.toString());
+                    foundDevices.add(addr.getHostAddress());
             } catch (Exception e) {
                 Logger.error("Exception while adding device with IP " + addr + " to foundDevices while scanning. Exception: " + e.getMessage());
             }
         });
+        System.out.println("DeviceScanner: After parallel!");
         return foundDevices;
     }
 }
