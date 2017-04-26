@@ -24,7 +24,7 @@ public class RemoteClient implements Runnable {
         int attempt = 0;
         while(hostDevice == null && attempt < 10)
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
                 attempt++;
             } catch (Exception e){
 
@@ -54,7 +54,7 @@ public class RemoteClient implements Runnable {
                 Thread.sleep(1000);
             }
         } catch (Exception e) {
-            Logger.error("Error during connection to remote host with IP: " + hostIp);
+            Logger.error("Error during connection to remote host with IP: " + hostIp + "\n\n" + e.getMessage());
         } finally {
             try {
                 if (host != null)
