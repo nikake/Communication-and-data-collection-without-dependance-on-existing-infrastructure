@@ -73,7 +73,7 @@ public class DeviceHandler implements Runnable {
     }
 
     private void updateInformation(){
-        InformationHolder.setDevices((ArrayList<Device>) devices.values());
+        InformationHolder.setDevices((devices.values()));
     }
 
     public void run(){
