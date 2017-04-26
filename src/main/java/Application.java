@@ -3,6 +3,7 @@ package main.java;
 import main.java.log.Logger;
 import main.java.network.DeviceHandler;
 import main.java.network.DeviceServer;
+import main.java.network.PairingHandler;
 import main.java.util.Device;
 import main.java.util.CommandExecutor;
 
@@ -96,6 +97,14 @@ public class Application implements Runnable {
         } catch (Exception e){
             Logger.error("Could not start DeviceHandler.\n\n" + e.getMessage());
         }
+        try{
+            PairingHandler ph = PairingHandler.getInstance();
+            Thread pHandler = new Thread(ph);
+            pHandler.start();
+        } catch (Exception e){
+            Logger.error("Could not start PairingHandler.\n\n" + e.getMessage());
+        }
+
     }
 
     private String setMacAddress(InetAddress addr){

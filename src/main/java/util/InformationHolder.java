@@ -6,14 +6,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InformationHolder {
 
-    private static CopyOnWriteArrayList<Device> devices;
+    private static CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
 
     public static CopyOnWriteArrayList<Device> getDevices() {
         return devices;
     }
 
     public static void setDevices(Collection<Device> devices) {
-        InformationHolder.devices = (CopyOnWriteArrayList<Device>) devices;
+        InformationHolder.devices.addAll(devices);
     }
 }
 
