@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 
 public class CommandExecutor {
 
-    private static Logger log = Logger.getLogger("CommandExecutor");
-
     public static String[] execute(String command) {
         return execute(new String[]{command});
     }
@@ -22,7 +20,7 @@ public class CommandExecutor {
             data = readData(p);
             errors = readErrors(p);
             if(!errors.isEmpty())
-                log.error(errors);
+                Logger.error("Failed to execute command");
         } catch(Exception e) {
             e.printStackTrace();
         }

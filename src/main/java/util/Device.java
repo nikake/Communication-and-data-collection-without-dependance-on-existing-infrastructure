@@ -1,6 +1,8 @@
 package main.java.util;
 
-public class Device {
+import java.io.Serializable;
+
+public class Device implements Serializable {
 
     public final String ipAddress;
     public final String hwAddress;

@@ -1,11 +1,13 @@
 package main.java.network;
 
+import main.java.Application;
 import main.java.log.Logger;
 import main.java.util.Device;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class LocalClient implements Runnable {
@@ -19,18 +21,9 @@ public class LocalClient implements Runnable {
     @Override
     public void run() {
         try{
-            //Set clientDevice
-            Device clientDevice = null;
-            ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-            do {
-                try {
-                    clientDevice = (Device) ois.readObject();
-                } catch (Exception e) {
-                    Logger.info("Attempted to set clientDevice, but failed.\n\n" + e.getMessage());
-                }
-            } while (clientDevice == null);
-            Logger.info("Communication with new device established. New device: " + clientDevice);
-            // Add clientDevice to collection
+            //Send localDevice to client
+            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+            oos.writeObject(Application.getLocalDevice());
 
             //Read messages from client
             BufferedReader clientReader = new BufferedReader(new InputStreamReader(client.getInputStream()));

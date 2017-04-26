@@ -5,7 +5,6 @@ import main.java.network.DeviceHandler;
 import main.java.network.DeviceServer;
 import main.java.util.Device;
 import main.java.util.CommandExecutor;
-import org.junit.internal.runners.model.EachTestNotifier;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -17,6 +16,7 @@ import java.util.Enumeration;
  */
 public class Application implements Runnable {
 
+    public static final Device NULL_DEVICE = new Device("dummy", "dummy", "dummy");
     public static final int HOST_PORT = 8000;
     private static Application instance;
     private static Device localDevice;
@@ -25,6 +25,7 @@ public class Application implements Runnable {
     private static boolean keepRunning = true;
 
     private Application() {
+        Logger l = Logger.getLogger();
         localDevice = setHost();
     }
 
@@ -69,7 +70,7 @@ public class Application implements Runnable {
     }
 
     public String[] getHostAddress() {
-        return host.getInetAddress().getHostAddress().split("\\.");
+        return localDevice.ipAddress.split("\\.");
     }
 
     public void close() {
@@ -83,7 +84,7 @@ public class Application implements Runnable {
         try{
             DeviceServer ds = DeviceServer.getInstance();
             Thread server = new Thread(ds);
-            server.run();
+            server.start();
         } catch (Exception e){
             Logger.error("Could not start DeviceServer.\n\n" + e.getMessage());
         }
@@ -91,7 +92,7 @@ public class Application implements Runnable {
         try{
             DeviceHandler dh = DeviceHandler.getInstance();
             Thread handler = new Thread(dh);
-            handler.run();
+            handler.start();
         } catch (Exception e){
             Logger.error("Could not start DeviceHandler.\n\n" + e.getMessage());
         }

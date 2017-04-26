@@ -16,9 +16,11 @@ public class Logger {
 
 	private Logger(String context) {
 		this.context = context;
+		System.out.println("Logger initiated");
+		new Thread(lw).start();
 	}
 
-	public static Logger getLogger(String who) {
+	public static Logger getLogger() {
 		return LoggerHolder.logger;
 	}
 
