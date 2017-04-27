@@ -78,6 +78,11 @@ public class PairingHandler implements Runnable {
                 rightStrength = right.getRssi();
                 System.out.println("Right rssi: " + rightStrength);
             }
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+
+            }
         }
     }
 }
