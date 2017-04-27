@@ -3,6 +3,8 @@ package main.java.network;
 import main.java.Application;
 import main.java.log.Logger;
 import main.java.util.Device;
+import main.java.util.InformationHolder;
+
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -64,9 +66,14 @@ public class DeviceHandler implements Runnable {
             }
         });
         if(updated) {
+            updateInformation();
             Logger.info("Device list updated: ");
             devices.forEach((String ip, Device d) -> Logger.info(d.toString()));
         }
+    }
+
+    private void updateInformation(){
+        InformationHolder.setDevices((devices.values()));
     }
 
     public void run(){
