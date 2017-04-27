@@ -4,10 +4,7 @@ import main.java.Application;
 import main.java.log.Logger;
 import main.java.util.Device;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class LocalClient implements Runnable {
@@ -24,6 +21,7 @@ public class LocalClient implements Runnable {
             //Send localDevice to client
             ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             oos.writeObject(Application.getLocalDevice());
+            PrintWriter clientWriter = new PrintWriter(client.getOutputStream());
 
             //Read messages from client
             BufferedReader clientReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -31,6 +29,18 @@ public class LocalClient implements Runnable {
             while(inputLine != null) {
                 final String message = inputLine;
                 // Do something with message
+                switch(message) {
+                    case "left_neighbour":
+                        boolean hasLeft = PairingHandler.getInstance().getLeft() == null;
+                        clientWriter.print(hasLeft);
+                        break;
+                    case "right_neighbour":
+                        boolean hasRight = PairingHandler.getInstance().getLeft() == null;
+                        clientWriter.print(hasRight);
+                        break;
+                    default:
+                        break;
+                }
                 inputLine = clientReader.readLine();
             }
         } catch (Exception e){
