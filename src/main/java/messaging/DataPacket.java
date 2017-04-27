@@ -3,7 +3,9 @@ package main.java.messaging;
 import main.java.network.RoutingTable;
 import main.java.util.Device;
 
-public class DataPacket {
+import java.io.Serializable;
+
+public class DataPacket implements Serializable {
 
     public final Device SENDER;
     public final Device RECEIVER;
