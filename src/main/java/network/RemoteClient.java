@@ -68,13 +68,17 @@ public class RemoteClient implements Runnable {
         }
     }
 
-    private void close() throws IOException {
-        if (host != null)
-            host.close();
-        if (hostReader != null)
-            hostReader.close();
-        if (hostWriter != null)
-            hostWriter.close();
+    private void close() {
+        try {
+            if (host != null)
+                host.close();
+            if (hostReader != null)
+                hostReader.close();
+            if (hostWriter != null)
+                hostWriter.close();
+        } catch (Exception e) {
+            Logger.error("Error closing connection to remote host with IP: " + host.getRemoteSocketAddress());
+        }
     }
 
     @Override
@@ -87,11 +91,7 @@ public class RemoteClient implements Runnable {
         } catch (Exception e) {
             Logger.error("Error during connection to remote host with IP: " + ip + "\n\n" + e.getMessage());
         } finally {
-            try {
-                close();
-            } catch (Exception e) {
-                Logger.error("Error closing connection to remote host with IP: " + host.getRemoteSocketAddress());
-            }
+            close();
         }
     }
 }
