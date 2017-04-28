@@ -71,6 +71,10 @@ public class RemoteClient implements Runnable {
     private void close() throws IOException {
         if (host != null)
             host.close();
+        if (hostReader != null)
+            hostReader.close();
+        if (hostWriter != null)
+            hostWriter.close();
     }
 
     @Override
