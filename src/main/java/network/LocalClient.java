@@ -33,13 +33,19 @@ public class LocalClient implements Runnable {
         }
     }
 
-    private void close() throws IOException {
-        if (client != null)
-            client.close();
-        if (clientWriter != null)
-            clientWriter.close();
-        if (clientReader != null)
-            clientReader.close();
+    private void close() {
+        try {
+            if (client != null)
+                client.close();
+            if (clientWriter != null)
+                clientWriter.close();
+            if (clientReader != null)
+                clientReader.close();
+        } catch (Exception e){
+            Logger.error("Could not close client socket to client "
+                    + client.getLocalSocketAddress()
+                    + ".\n\n" + e.getMessage());
+        }
     }
 
     @Override
@@ -51,13 +57,7 @@ public class LocalClient implements Runnable {
         } catch (Exception e){
             Logger.error("Error while running client.\n\n" + e.getMessage());
         } finally {
-            try {
-                close();
-            } catch (Exception e){
-                Logger.error("Could not close client socket to client "
-                        + client.getLocalSocketAddress()
-                        + ".\n\n" + e.getMessage());
-            }
+            close();
         }
 
     }
