@@ -10,45 +10,49 @@ import java.net.Socket;
 public class LocalClient implements Runnable {
 
     private Socket client;
+    private ObjectOutputStream clientWriter = null;
+    private ObjectInputStream clientReader = null;
 
     public LocalClient(Socket client) {
         this.client = client;
     }
 
+    private void initiateStreams() throws IOException {
+        clientWriter = new ObjectOutputStream(client.getOutputStream());
+        clientReader = new ObjectInputStream(client.getInputStream());
+    }
+
+    private void sendLocalDeviceDataToClient() throws IOException {
+        clientWriter.writeObject(Application.getLocalDevice());
+    }
+
+    private void readClientMessages() throws IOException, ClassNotFoundException {
+        Object message = null;
+        while((message = clientReader.readObject()) != null) {
+
+        }
+    }
+
+    private void close() throws IOException {
+        if (client != null)
+            client.close();
+        if (clientWriter != null)
+            clientWriter.close();
+        if (clientReader != null)
+            clientReader.close();
+    }
+
     @Override
     public void run() {
         try{
-            //Send localDevice to client
-            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-            oos.writeObject(Application.getLocalDevice());
-            PrintWriter clientWriter = new PrintWriter(client.getOutputStream());
-
-            //Read messages from client
-            BufferedReader clientReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            String inputLine = clientReader.readLine();
-            while(inputLine != null) {
-                final String message = inputLine;
-                // Do something with message
-                switch(message) {
-                    case "left_neighbour":
-                        boolean hasLeft = PairingHandler.getInstance().getLeft() == null;
-                        clientWriter.print(hasLeft);
-                        break;
-                    case "right_neighbour":
-                        boolean hasRight = PairingHandler.getInstance().getLeft() == null;
-                        clientWriter.print(hasRight);
-                        break;
-                    default:
-                        break;
-                }
-                inputLine = clientReader.readLine();
-            }
+            initiateStreams();
+            sendLocalDeviceDataToClient();
+            readClientMessages();
         } catch (Exception e){
             Logger.error("Error while running client.\n\n" + e.getMessage());
         } finally {
             try {
-                if (client != null)
-                    client.close();
+                close();
             } catch (Exception e){
                 Logger.error("Could not close client socket to client "
                         + client.getLocalSocketAddress()
