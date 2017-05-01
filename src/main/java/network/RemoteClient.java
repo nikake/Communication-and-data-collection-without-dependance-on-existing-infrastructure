@@ -37,7 +37,7 @@ public class RemoteClient implements Runnable {
         host = new Socket(ip, port);
         Logger.info("Connected to remote host with IP: " + host.getRemoteSocketAddress());
         System.out.println("Connected to remote host with IP: " + host.getRemoteSocketAddress());
-        InformationHolder.remoteClients.put(host.getRemoteSocketAddress(), this);
+        InformationHolder.remoteClients.put(host.getInetAddress().getHostAddress(), this);
     }
 
     private void initiateStreams() throws IOException {
@@ -92,6 +92,7 @@ public class RemoteClient implements Runnable {
 
     private void readMessage(DataPacket dataPacket) throws IOException {
         DataPacket returnPacket;
+        Logger.info("Received from: " + dataPacket.SENDER.ipAddress + " Message: " + dataPacket.MESSAGE.name());
         switch (dataPacket.MESSAGE) {
             case SET_LEFT_NEIGHBOUR_OK:
                 PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.OK);
@@ -116,7 +117,7 @@ public class RemoteClient implements Runnable {
 
     private void close() {
         try {
-            InformationHolder.remoteClients.remove(host.getRemoteSocketAddress());
+            InformationHolder.remoteClients.remove(host.getInetAddress().getHostAddress());
             if (host != null)
                 host.close();
             if (hostReader != null)

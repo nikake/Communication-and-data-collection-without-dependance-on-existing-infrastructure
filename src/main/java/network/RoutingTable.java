@@ -1,4 +1,6 @@
 package main.java.network;
 
-public class RoutingTable {
+import java.io.Serializable;
+
+public class RoutingTable implements Serializable{
 }

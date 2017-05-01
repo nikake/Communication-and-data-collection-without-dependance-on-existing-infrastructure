@@ -19,7 +19,7 @@ public class LocalClient implements Runnable {
 
     public LocalClient(Socket client) {
         this.client = client;
-        InformationHolder.localClients.put(client.getRemoteSocketAddress(), this);
+        InformationHolder.localClients.put(client.getInetAddress().getHostAddress(), this);
     }
 
     private void initiateStreams() throws IOException {
@@ -74,9 +74,11 @@ public class LocalClient implements Runnable {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_OK, null, null);
                 else
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_DENIED, null, null);
+                Logger.info("Trying to return message to: " + dataPacket.SENDER.ipAddress);
                 clientWriter.writeObject(returnPacket);
                 break;
             case SET_RIGHT_NEIGHBOUR:
+                Logger.info(dataPacket.SENDER.ipAddress + " asking to set this device as its right neighbour.");
                 if(PairingHandler.getInstance().setRight(dataPacket.SENDER))
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_OK, null, null);
                 else
@@ -100,7 +102,7 @@ public class LocalClient implements Runnable {
 
     private void close() {
         try {
-            InformationHolder.localClients.remove(client.getRemoteSocketAddress());
+            InformationHolder.localClients.remove(client.getInetAddress().getHostAddress());
             if (client != null)
                 client.close();
             if (clientWriter != null)

@@ -1,6 +1,7 @@
 package main.java.network;
 
 import main.java.Application;
+import main.java.messaging.DataPacket;
 import main.java.messaging.Message;
 import main.java.util.Device;
 import main.java.util.InformationHolder;
@@ -16,6 +17,7 @@ public class PairingHandler implements Runnable {
     private BluetoothScanner left;
     private BluetoothScanner right;
     private Semaphore permits;
+    private final Object pairingLock = new Object();
 
     public PairingHandler() {
         while(left == null && right == null) {
@@ -46,7 +48,21 @@ public class PairingHandler implements Runnable {
                     closestRssi = me.getValue().getRssi();
                 }
             }
-            right = closest;
+
+            RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
+
+            try {
+                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
+                pendingLeft = closest;
+                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
+                pendingRight = closest;
+
+            }catch (Exception e){
+
+            }
+
+
+
             System.out.println("Closest RSSI: " + closestRssi);
         }
     }
@@ -54,6 +70,9 @@ public class PairingHandler implements Runnable {
     public static PairingHandler getInstance(){
         return instance;
     }
+
+    private BluetoothScanner pendingLeft;
+    private BluetoothScanner pendingRight;
 
     public BluetoothScanner getLeft() {
         return left;
@@ -64,18 +83,42 @@ public class PairingHandler implements Runnable {
     }
 
     public boolean setLeft(Device device) {
+        //om den kan sätta, sätt device till left
+        synchronized (pairingLock) {
+            if (left == null && (right == null || !right.device.equals(device))) {
+
+            }
+        }
         return false;
     }
 
     public boolean setLeft(Device device, Message message) {
+        //om den kan sätta, sätt device till left
+        synchronized (pairingLock) {
+            if (left == null && (right == null || !right.device.equals(device))) {
+                left = pendingLeft;
+            }
+        }
         return false;
     }
 
     public boolean setRight(Device device) {
+        //om den kan sätta, sätt device till right
+        synchronized (pairingLock) {
+            if (right == null && (left == null || !left.device.equals(device))) {
+
+            }
+        }
         return false;
     }
 
     public boolean setRight(Device device, Message message) {
+        //om den kan sätta, sätt device till right
+        synchronized (pairingLock) {
+            if (right == null && (left == null || !left.device.equals(device))) {
+                right = pendingRight;
+            }
+        }
         return false;
     }
 
