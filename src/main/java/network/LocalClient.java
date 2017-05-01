@@ -5,6 +5,7 @@ import main.java.log.Logger;
 import main.java.messaging.DataPacket;
 import main.java.messaging.Message;
 import main.java.util.Device;
+import main.java.util.InformationHolder;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,6 +19,7 @@ public class LocalClient implements Runnable {
 
     public LocalClient(Socket client) {
         this.client = client;
+        InformationHolder.localClients.put(client.getRemoteSocketAddress(), this);
     }
 
     private void initiateStreams() throws IOException {
@@ -98,6 +100,7 @@ public class LocalClient implements Runnable {
 
     private void close() {
         try {
+            InformationHolder.localClients.remove(client.getRemoteSocketAddress());
             if (client != null)
                 client.close();
             if (clientWriter != null)
