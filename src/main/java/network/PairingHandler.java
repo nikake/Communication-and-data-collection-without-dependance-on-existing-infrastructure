@@ -39,14 +39,27 @@ public class PairingHandler implements Runnable {
             int closestRssi = -100;
             // Pair with closest device.
             for(Map.Entry<Device, BluetoothScanner> me : rssiValues.entrySet()) {
-                // Check if left or right is available in the other device.
-                if(me.getValue().getRssi() >= closestRssi) {
-                    closest = me.getValue();
-                    closestRssi = me.getValue().getRssi();
+                // Check if left or right is available in the other device
+                if(!me.getKey().hasLeft() || !me.getKey().hasRight()) {
+                    if (me.getValue().getRssi() >= closestRssi) {
+                        closest = me.getValue();
+                        closestRssi = me.getValue().getRssi();
+                    }
                 }
             }
-            right = closest;
+            if(!closest.device.hasLeft()) {
+                right = closest;
+                Application.getLocalDevice().setRight(true);
+            } else {
+                left = closest;
+                Application.getLocalDevice().setLeft(true);
+            }
+
             System.out.println("Closest RSSI: " + closestRssi);
+            if(right != null)
+                System.out.println("Right: " + right.device);
+            else if (left != null)
+                System.out.println("Left: " + left.device);
         }
     }
 
