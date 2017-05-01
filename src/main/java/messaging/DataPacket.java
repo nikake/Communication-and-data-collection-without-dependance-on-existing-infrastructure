@@ -14,7 +14,7 @@ public class DataPacket implements Serializable {
     public final RoutingTable ROUTING_TABLE;
 
     public DataPacket(Device sender, Device receiver, Message msg, Object data, RoutingTable rTable) {
-        this.SENDER= sender;
+        this.SENDER = sender;
         this.RECEIVER = receiver;
         this.MESSAGE = msg;
         this.DATA = data;
