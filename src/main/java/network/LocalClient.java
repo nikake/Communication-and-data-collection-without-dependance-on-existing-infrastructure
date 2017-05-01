@@ -2,7 +2,8 @@ package main.java.network;
 
 import main.java.Application;
 import main.java.log.Logger;
-import main.java.util.Device;
+import main.java.messaging.DataPacket;
+import main.java.messaging.MessageReader;
 
 import java.io.*;
 import java.net.Socket;
@@ -29,7 +30,17 @@ public class LocalClient implements Runnable {
     private void readClientMessages() throws IOException, ClassNotFoundException {
         Object message = null;
         while((message = clientReader.readObject()) != null) {
+            if (message instanceof DataPacket)
+                parsePacket((DataPacket) message);
+        }
+    }
 
+    private void parsePacket(DataPacket dataPacket) {
+        if (dataPacket.RECEIVER.equals(Application.getLocalDevice())) {
+            MessageReader messageReader = new MessageReader();
+            messageReader.readMessage(dataPacket.MESSAGE);
+        } else {
+            // Skicka vidare enligt dataPacket.ROUTING_TABLE
         }
     }
 
