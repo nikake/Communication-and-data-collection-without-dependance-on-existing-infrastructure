@@ -7,6 +7,8 @@ public class Device implements Serializable {
     public final String ipAddress;
     public final String hwAddress;
     public final String btAddress;
+    private boolean left = false;
+    private boolean right = false;
 
     public Device(String ipAddress, String hwAddress, String btAddress) {
         this.ipAddress = ipAddress;
@@ -24,4 +26,19 @@ public class Device implements Serializable {
         return false;
     }
 
+    public boolean hasLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public boolean hasRight() {
+        return right;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
 }
