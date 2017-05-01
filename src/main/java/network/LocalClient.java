@@ -2,6 +2,8 @@ package main.java.network;
 
 import main.java.Application;
 import main.java.log.Logger;
+import main.java.messaging.DataPacket;
+import main.java.messaging.Message;
 import main.java.util.Device;
 
 import java.io.*;
@@ -10,50 +12,116 @@ import java.net.Socket;
 public class LocalClient implements Runnable {
 
     private Socket client;
+    private Device clientDevice = null;
+    private ObjectOutputStream clientWriter = null;
+    private ObjectInputStream clientReader = null;
 
     public LocalClient(Socket client) {
         this.client = client;
     }
 
+    private void initiateStreams() throws IOException {
+        clientWriter = new ObjectOutputStream(client.getOutputStream());
+        clientReader = new ObjectInputStream(client.getInputStream());
+    }
+
+    private void setClientDevice() {
+        do {
+            try {
+                clientDevice = (Device) clientReader.readObject();
+            } catch (Exception e) {
+                Logger.info("Attempted to set clientDevice, but failed.\n\n" + e.getMessage());
+            }
+        } while (clientDevice == null);
+        Logger.info("Client opened: " + clientDevice);
+        System.out.println("Client opened: " + clientDevice);
+    }
+
+    private void sendLocalDeviceDataToClient() throws IOException {
+        clientWriter.writeObject(Application.getLocalDevice());
+    }
+
+    private void readClientMessages() throws IOException, ClassNotFoundException {
+        Object message = null;
+        while((message = clientReader.readObject()) != null) {
+            if (message instanceof DataPacket)
+                parsePacket((DataPacket) message);
+        }
+    }
+
+    private void parsePacket(DataPacket dataPacket) throws IOException {
+        if (dataPacket.RECEIVER.equals(Application.getLocalDevice())) {
+            readMessage(dataPacket);
+        } else {
+            // Skicka vidare enligt dataPacket.ROUTING_TABLE
+        }
+    }
+
+    private void readMessage(DataPacket dataPacket) throws IOException {
+        DataPacket returnPacket;
+        switch (dataPacket.MESSAGE) {
+            case TOO_CLOSE:
+                Logger.info("Too close to neighbour " + dataPacket.SENDER.ipAddress + ".");
+                break;
+            case TOO_FAR_AWAY:
+                Logger.info("Too far away from neighbour " + dataPacket.SENDER.ipAddress + ".");
+                break;
+            case SET_LEFT_NEIGHBOUR:
+                Logger.info(dataPacket.SENDER.ipAddress + " asking to set this device as its left neighbour.");
+                if(PairingHandler.getInstance().setLeft(dataPacket.SENDER))
+                    returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_OK, null, null);
+                else
+                    returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_DENIED, null, null);
+                clientWriter.writeObject(returnPacket);
+                break;
+            case SET_RIGHT_NEIGHBOUR:
+                if(PairingHandler.getInstance().setRight(dataPacket.SENDER))
+                    returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_OK, null, null);
+                else
+                    returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_DENIED, null, null);
+                clientWriter.writeObject(returnPacket);
+                break;
+            case GET_INFO:
+                returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.GET_INFO_OK, null, null);
+                clientWriter.writeObject(returnPacket);
+                break;
+            case UPDATE_ROUTING_TABLE:
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void sendMessage(DataPacket dataPacket) throws IOException {
+        clientWriter.writeObject(dataPacket);
+    }
+
+    private void close() {
+        try {
+            if (client != null)
+                client.close();
+            if (clientWriter != null)
+                clientWriter.close();
+            if (clientReader != null)
+                clientReader.close();
+        } catch (Exception e){
+            Logger.error("Could not close client socket to client "
+                    + client.getLocalSocketAddress()
+                    + ".\n\n" + e.getMessage());
+        }
+    }
+
     @Override
     public void run() {
         try{
-            //Send localDevice to client
-            ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-            oos.writeObject(Application.getLocalDevice());
-            PrintWriter clientWriter = new PrintWriter(client.getOutputStream());
-
-            //Read messages from client
-            BufferedReader clientReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            String inputLine = clientReader.readLine();
-            while(inputLine != null) {
-                final String message = inputLine;
-                // Do something with message
-                switch(message) {
-                    case "left_neighbour":
-                        boolean hasLeft = PairingHandler.getInstance().getLeft() == null;
-                        clientWriter.print(hasLeft);
-                        break;
-                    case "right_neighbour":
-                        boolean hasRight = PairingHandler.getInstance().getLeft() == null;
-                        clientWriter.print(hasRight);
-                        break;
-                    default:
-                        break;
-                }
-                inputLine = clientReader.readLine();
-            }
+            initiateStreams();
+            sendLocalDeviceDataToClient();
+            setClientDevice();
+            readClientMessages();
         } catch (Exception e){
             Logger.error("Error while running client.\n\n" + e.getMessage());
         } finally {
-            try {
-                if (client != null)
-                    client.close();
-            } catch (Exception e){
-                Logger.error("Could not close client socket to client "
-                        + client.getLocalSocketAddress()
-                        + ".\n\n" + e.getMessage());
-            }
+            close();
         }
 
     }

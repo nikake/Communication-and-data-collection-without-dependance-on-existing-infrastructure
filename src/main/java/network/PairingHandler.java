@@ -1,6 +1,7 @@
 package main.java.network;
 
 import main.java.Application;
+import main.java.messaging.Message;
 import main.java.util.Device;
 import main.java.util.InformationHolder;
 
@@ -60,6 +61,22 @@ public class PairingHandler implements Runnable {
 
     public BluetoothScanner getRight() {
         return right;
+    }
+
+    public boolean setLeft(Device device) {
+        return false;
+    }
+
+    public boolean setLeft(Device device, Message message) {
+        return false;
+    }
+
+    public boolean setRight(Device device) {
+        return false;
+    }
+
+    public boolean setRight(Device device, Message message) {
+        return false;
     }
 
     private void pairDevice(){
