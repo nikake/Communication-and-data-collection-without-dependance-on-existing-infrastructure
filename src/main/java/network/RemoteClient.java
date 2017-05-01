@@ -6,6 +6,7 @@ import main.java.messaging.DataPacket;
 import main.java.messaging.Message;
 import main.java.messaging.MessageReader;
 import main.java.util.Device;
+import main.java.util.InformationHolder;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +37,7 @@ public class RemoteClient implements Runnable {
         host = new Socket(ip, port);
         Logger.info("Connected to remote host with IP: " + host.getRemoteSocketAddress());
         System.out.println("Connected to remote host with IP: " + host.getRemoteSocketAddress());
-
+        InformationHolder.remoteClients.put(host.getRemoteSocketAddress(), this);
     }
 
     private void initiateStreams() throws IOException {
@@ -115,6 +116,7 @@ public class RemoteClient implements Runnable {
 
     private void close() {
         try {
+            InformationHolder.remoteClients.remove(host.getRemoteSocketAddress());
             if (host != null)
                 host.close();
             if (hostReader != null)
