@@ -3,6 +3,7 @@ package main.java.network;
 import main.java.Application;
 import main.java.log.Logger;
 import main.java.messaging.DataPacket;
+import main.java.messaging.Message;
 import main.java.messaging.MessageReader;
 import main.java.util.Device;
 
@@ -10,6 +11,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RemoteClient implements Runnable {
 
@@ -63,21 +68,49 @@ public class RemoteClient implements Runnable {
         System.out.println("Communication with new device established. New device: " + hostDevice);
     }
 
+    private void sendLocalDeviceDataToHost() throws IOException {
+        hostWriter.writeObject(Application.getLocalDevice());
+    }
+
     private void readHostMessages() throws IOException, ClassNotFoundException {
-        Object message = null;
+        Object message;
         while((message = hostReader.readObject()) != null) {
             if (message instanceof DataPacket)
                 parsePacket((DataPacket) message);
         }
     }
 
-    private void parsePacket(DataPacket dataPacket) {
+    private void parsePacket(DataPacket dataPacket) throws IOException {
         if (dataPacket.RECEIVER.equals(Application.getLocalDevice())) {
-            MessageReader messageReader = new MessageReader();
-            messageReader.readMessage(dataPacket.MESSAGE);
+            readMessage(dataPacket);
         } else {
             // Skicka vidare enligt dataPacket.ROUTING_TABLE
+            Logger.info("Received data packet to route forward to unit " + dataPacket.RECEIVER);
         }
+    }
+
+    private void readMessage(DataPacket dataPacket) throws IOException {
+        DataPacket returnPacket;
+        switch (dataPacket.MESSAGE) {
+            case SET_LEFT_NEIGHBOUR_OK:
+                PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.OK);
+                break;
+            case SET_LEFT_NEIGHBOUR_DENIED:
+                PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.DENIED);
+                break;
+            case SET_RIGHT_NEIGHBOUR_OK:
+                PairingHandler.getInstance().setRight(dataPacket.SENDER, Message.OK);
+                break;
+            case SET_RIGHT_NEIGHBOUR_DENIED:
+                PairingHandler.getInstance().setRight(dataPacket.SENDER, Message.DENIED);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void sendMessage(DataPacket dataPacket) throws IOException {
+        hostWriter.writeObject(dataPacket);
     }
 
     private void close() {
@@ -98,6 +131,7 @@ public class RemoteClient implements Runnable {
         try {
             connectToHost();
             initiateStreams();
+            sendLocalDeviceDataToHost();
             setHostDevice();
             readHostMessages();
         } catch (Exception e) {
