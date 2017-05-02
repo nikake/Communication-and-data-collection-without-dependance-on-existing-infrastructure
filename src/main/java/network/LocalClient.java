@@ -125,6 +125,7 @@ public class LocalClient implements Runnable {
             readClientMessages();
         } catch (Exception e){
             Logger.error("Error while running client.\n\n" + e.getMessage());
+            e.printStackTrace();
         } finally {
             close();
         }
