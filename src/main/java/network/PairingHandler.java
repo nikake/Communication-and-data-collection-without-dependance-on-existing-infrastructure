@@ -6,7 +6,6 @@ import main.java.messaging.Message;
 import main.java.util.Device;
 import main.java.util.InformationHolder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,8 +15,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PairingHandler implements Runnable {
 
     private static PairingHandler instance = new PairingHandler();
-    private BluetoothScanner left;
-    private BluetoothScanner right;
+    private BluetoothScanner left = null;
+    private BluetoothScanner right = null;
+    private BluetoothScanner nullBS = null;
     private AtomicReference<BluetoothScanner> leftRef;
     private AtomicReference<BluetoothScanner> rightRef;
     private Semaphore permits;
@@ -47,8 +47,7 @@ public class PairingHandler implements Runnable {
 
     private boolean startLeft(Device device) {
         BluetoothScanner bs = new BluetoothScanner(device);
-        leftRef.compareAndSet(null, bs);
-        if(left.equals(bs)) {
+        if(leftRef.compareAndSet(nullBS, bs)) {
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
@@ -79,8 +78,7 @@ public class PairingHandler implements Runnable {
 
     private boolean startRight(Device device) {
         BluetoothScanner bs = new BluetoothScanner(device);
-        rightRef.compareAndSet(null, bs);
-        if(right.equals(bs)) {
+        if(rightRef.compareAndSet(nullBS, bs)) {
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
