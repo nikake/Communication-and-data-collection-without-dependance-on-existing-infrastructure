@@ -131,11 +131,11 @@ public class PairingHandler implements Runnable {
         int leftStrength, rightStrength;
         if (left != null) {
             leftStrength = left.getRssi();
-            System.out.println("Left rssi: " + leftStrength);
+            System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
         }
         if (right != null) {
             rightStrength = right.getRssi();
-            System.out.println("Right rssi: " + rightStrength);
+            System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
         }
         try {
             Thread.sleep(100);
