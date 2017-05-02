@@ -22,7 +22,10 @@ public class CommandExecutor {
             if(!errors.isEmpty())
                 Logger.error("Failed to execute command");
         } catch(Exception e) {
-            e.printStackTrace();
+            StringBuffer sb = new StringBuffer();
+            for (String command : commands)
+                sb.append(command);
+            Logger.error("Error while executing command " + sb.toString());
         }
         return data.split("\n");
     }
