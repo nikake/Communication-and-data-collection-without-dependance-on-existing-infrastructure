@@ -106,25 +106,23 @@ public class PairingHandler implements Runnable {
 
     }
 
-    private HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
-
-
     private void searchForNeighbours() {
+        HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
+        CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
+        devices.addAll(InformationHolder.getDevices());
+
+        for(Device d : devices){
+            BluetoothScanner bs = new BluetoothScanner(d);
+            Thread btScanner = new Thread(bs);
+            btScanner.start();
+            rssiValues.put(bs, btScanner);
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+
+        }
         while(left == null && right == null) {
-            CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
-            devices.addAll(InformationHolder.getDevices());
-
-            for(Device d : devices){
-                BluetoothScanner bs = new BluetoothScanner(d);
-                Thread btScanner = new Thread(bs);
-                btScanner.start();
-                rssiValues.put(bs, btScanner);
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-
-            }
             BluetoothScanner closest = null;
             int closestRssi = -100;
             // Pair with closest device.
@@ -134,8 +132,6 @@ public class PairingHandler implements Runnable {
                     closest = me.getKey();
                     closestRssi = me.getKey().getRssi();
                 }
-                if(me.getValue().isAlive())
-                    me.getValue().interrupt();
             }
             if(closest != null) {
                 RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
@@ -148,7 +144,13 @@ public class PairingHandler implements Runnable {
 
                 }
             }
+
             System.out.println("Closest RSSI: " + closestRssi);
+        }
+        for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
+            // Check if left or right is available in the other device.
+            if(me.getValue().isAlive())
+                me.getValue().interrupt();
         }
     }
 
