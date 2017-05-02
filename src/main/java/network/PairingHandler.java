@@ -111,15 +111,17 @@ public class PairingHandler implements Runnable {
                 if(me.getValue().isAlive())
                     me.getValue().interrupt();
             }
-            RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
-            try {
-                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
-                pendingLeft = closest;
-                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
-                pendingRight = closest;
+            if(closest != null) {
+                RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
+                try {
+                    remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
+                    pendingLeft = closest;
+                    remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
+                    pendingRight = closest;
 
-            }catch (Exception e){
+                } catch (Exception e){
 
+                }
             }
             System.out.println("Closest RSSI: " + closestRssi);
         }
