@@ -70,7 +70,7 @@ public class LocalClient implements Runnable {
                 break;
             case SET_LEFT_NEIGHBOUR:
                 Logger.info(dataPacket.SENDER.ipAddress + " asking to set this device as its left neighbour.");
-                if(PairingHandler.getInstance().setLeft(dataPacket.SENDER))
+                if(PairingHandler.getInstance().setRight(dataPacket.SENDER))
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_OK, null, null);
                 else
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_DENIED, null, null);
@@ -79,7 +79,7 @@ public class LocalClient implements Runnable {
                 break;
             case SET_RIGHT_NEIGHBOUR:
                 Logger.info(dataPacket.SENDER.ipAddress + " asking to set this device as its right neighbour.");
-                if(PairingHandler.getInstance().setRight(dataPacket.SENDER))
+                if(PairingHandler.getInstance().setLeft(dataPacket.SENDER))
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_OK, null, null);
                 else
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_DENIED, null, null);
