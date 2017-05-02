@@ -10,17 +10,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PairingHandler implements Runnable {
 
     private static PairingHandler instance = new PairingHandler();
     private BluetoothScanner left;
     private BluetoothScanner right;
+    private AtomicReference<BluetoothScanner> leftRef;
+    private AtomicReference<BluetoothScanner> rightRef;
     private Semaphore permits;
     private final Object pairingLock = new Object();
 
     public PairingHandler() {
-
+        left = null;
+        right = null;
+        leftRef = new AtomicReference<>(left);
+        rightRef = new AtomicReference<>(right);
     }
 
     public static PairingHandler getInstance(){
@@ -38,41 +44,59 @@ public class PairingHandler implements Runnable {
         return right;
     }
 
+    private boolean startLeft(Device device) {
+        BluetoothScanner bs = new BluetoothScanner(device);
+        leftRef.compareAndSet(null, bs);
+        if(left.equals(bs)) {
+            Thread btScanner = new Thread(bs);
+            btScanner.start();
+            return true;
+        }
+        return false;
+    }
+
     public boolean setLeft(Device device) {
         //om den kan sätta, sätt device till left
-        synchronized (pairingLock) {
-            if (left == null && (right == null || !right.device.equals(device))) {
-
-            }
+        if (left == null && (right == null || !right.device.equals(device))) {
+            startLeft(device);
         }
         return false;
     }
 
     public boolean setLeft(Device device, Message message) {
         //om den kan sätta, sätt device till left
-        synchronized (pairingLock) {
+        if(message == Message.OK) {
             if (left == null && (right == null || !right.device.equals(device))) {
-                left = pendingLeft;
+                startLeft(device);
             }
+        }
+        return false;
+    }
+
+    private boolean startRight(Device device) {
+        BluetoothScanner bs = new BluetoothScanner(device);
+        rightRef.compareAndSet(null, bs);
+        if(right.equals(bs)) {
+            Thread btScanner = new Thread(bs);
+            btScanner.start();
+            return true;
         }
         return false;
     }
 
     public boolean setRight(Device device) {
         //om den kan sätta, sätt device till right
-        synchronized (pairingLock) {
-            if (right == null && (left == null || !left.device.equals(device))) {
-
-            }
+        if (right == null && (left == null || !left.device.equals(device))) {
+            return startRight(device);
         }
         return false;
     }
 
     public boolean setRight(Device device, Message message) {
         //om den kan sätta, sätt device till right
-        synchronized (pairingLock) {
+        if (message == Message.OK) {
             if (right == null && (left == null || !left.device.equals(device))) {
-                right = pendingRight;
+                return startRight(device);
             }
         }
         return false;
@@ -82,12 +106,14 @@ public class PairingHandler implements Runnable {
 
     }
 
+    private HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
+
+
     private void searchForNeighbours() {
         while(left == null && right == null) {
             CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
             devices.addAll(InformationHolder.getDevices());
 
-            HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
             for(Device d : devices){
                 BluetoothScanner bs = new BluetoothScanner(d);
                 Thread btScanner = new Thread(bs);
@@ -114,11 +140,10 @@ public class PairingHandler implements Runnable {
             if(closest != null) {
                 RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
                 try {
-                    remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
-                    pendingLeft = closest;
                     remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
+                    pendingLeft = closest;
+                    remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
                     pendingRight = closest;
-
                 } catch (Exception e){
 
                 }
