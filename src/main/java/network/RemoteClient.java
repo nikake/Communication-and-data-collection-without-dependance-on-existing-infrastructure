@@ -139,6 +139,7 @@ public class RemoteClient implements Runnable {
             readHostMessages();
         } catch (Exception e) {
             Logger.error("Error during connection to remote host with IP: " + ip + "\n\n" + e.getMessage());
+            e.printStackTrace();
         } finally {
             close();
         }
