@@ -20,7 +20,7 @@ public class CommandExecutor {
             data = readData(p);
             errors = readErrors(p);
             if(!errors.isEmpty())
-                Logger.error("Failed to execute command");
+                Logger.error("Failed to execute command: " + errors);
         } catch(Exception e) {
             e.printStackTrace();
         }
