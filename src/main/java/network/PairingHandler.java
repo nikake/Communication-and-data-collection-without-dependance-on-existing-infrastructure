@@ -6,6 +6,7 @@ import main.java.messaging.Message;
 import main.java.util.Device;
 import main.java.util.InformationHolder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,8 +34,8 @@ public class PairingHandler implements Runnable {
         return instance;
     }
 
-    private BluetoothScanner pendingLeft;
-    private BluetoothScanner pendingRight;
+    private boolean pendingLeft;
+    private boolean pendingRight;
 
     public BluetoothScanner getLeft() {
         return left;
@@ -58,7 +59,7 @@ public class PairingHandler implements Runnable {
     public boolean setLeft(Device device) {
         //om den kan sätta, sätt device till left
         if (left == null && (right == null || !right.device.equals(device))) {
-            startLeft(device);
+            return startLeft(device);
         }
         return false;
     }
@@ -67,9 +68,12 @@ public class PairingHandler implements Runnable {
         //om den kan sätta, sätt device till left
         if(message == Message.OK) {
             if (left == null && (right == null || !right.device.equals(device))) {
-                startLeft(device);
+                boolean returnValue = startLeft(device);
+                pendingLeft = false;
+                return returnValue;
             }
         }
+        pendingLeft = false;
         return false;
     }
 
@@ -96,9 +100,12 @@ public class PairingHandler implements Runnable {
         //om den kan sätta, sätt device till right
         if (message == Message.OK) {
             if (right == null && (left == null || !left.device.equals(device))) {
-                return startRight(device);
+                boolean returnValue = startRight(device);
+                pendingRight = false;
+                return returnValue;
             }
         }
+        pendingRight = false;
         return false;
     }
 
@@ -108,9 +115,15 @@ public class PairingHandler implements Runnable {
 
     private void searchForNeighbours() {
         HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
-        CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
-        devices.addAll(InformationHolder.getDevices());
+        CopyOnWriteArrayList<Device> devices;
 
+        while((devices = InformationHolder.getDevices()).isEmpty()) {
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+
+            }
+        }
         for(Device d : devices){
             BluetoothScanner bs = new BluetoothScanner(d);
             Thread btScanner = new Thread(bs);
@@ -136,15 +149,21 @@ public class PairingHandler implements Runnable {
             if(closest != null) {
                 RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
                 try {
+                    pendingLeft = true;
+                    pendingRight = true;
                     remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
-                    pendingLeft = closest;
                     remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
-                    pendingRight = closest;
                 } catch (Exception e){
 
                 }
             }
+            while (pendingLeft || pendingRight) {
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
 
+                }
+            }
             System.out.println("Closest RSSI: " + closestRssi);
         }
         for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
