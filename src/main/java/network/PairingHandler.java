@@ -20,51 +20,7 @@ public class PairingHandler implements Runnable {
     private final Object pairingLock = new Object();
 
     public PairingHandler() {
-        while(left == null && right == null) {
-            // Get all known devices
-            while(InformationHolder.getDevices().isEmpty()){
-                try{
-                    Thread.sleep(50);
-                } catch (Exception e){
 
-                }
-            }
-            CopyOnWriteArrayList<Device> devices = InformationHolder.getDevices();
-            HashMap<Device, BluetoothScanner> rssiValues = new HashMap<>();
-            // Go through all devices and check which device with a free spot is closest
-            for(Device d : devices){
-                BluetoothScanner bs = new BluetoothScanner(d);
-                Thread btScanner = new Thread(bs);
-                btScanner.start();
-                rssiValues.put(d, bs);
-            }
-            BluetoothScanner closest = null;
-            int closestRssi = -100;
-            // Pair with closest device.
-            for(Map.Entry<Device, BluetoothScanner> me : rssiValues.entrySet()) {
-                // Check if left or right is available in the other device.
-                if(me.getValue().getRssi() >= closestRssi) {
-                    closest = me.getValue();
-                    closestRssi = me.getValue().getRssi();
-                }
-            }
-
-            RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
-
-            try {
-                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
-                pendingLeft = closest;
-                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
-                pendingRight = closest;
-
-            }catch (Exception e){
-
-            }
-
-
-
-            System.out.println("Closest RSSI: " + closestRssi);
-        }
     }
 
     public static PairingHandler getInstance(){
@@ -126,22 +82,73 @@ public class PairingHandler implements Runnable {
 
     }
 
-    @Override
-    public void run() {
-        int leftStrength, rightStrength;
-        while(true) {
-            if (left != null) {
-                leftStrength = left.getRssi();
-                System.out.println("Left rssi: " + leftStrength);
-            }
-            if (right != null) {
-                rightStrength = right.getRssi();
-                System.out.println("Right rssi: " + rightStrength);
+    private void searchForNeighbours() {
+        while(left == null && right == null) {
+            CopyOnWriteArrayList<Device> devices = new CopyOnWriteArrayList<>();
+            devices.addAll(InformationHolder.getDevices());
+
+            HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
+            for(Device d : devices){
+                BluetoothScanner bs = new BluetoothScanner(d);
+                Thread btScanner = new Thread(bs);
+                btScanner.start();
+                rssiValues.put(bs, btScanner);
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000);
             } catch (Exception e) {
 
+            }
+            BluetoothScanner closest = null;
+            int closestRssi = -100;
+            // Pair with closest device.
+            for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
+                // Check if left or right is available in the other device.
+                if(me.getKey().getRssi() >= closestRssi) {
+                    closest = me.getKey();
+                    closestRssi = me.getKey().getRssi();
+                }
+                if(me.getValue().isAlive())
+                    me.getValue().interrupt();
+            }
+            RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
+            try {
+                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
+                pendingLeft = closest;
+                remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
+                pendingRight = closest;
+
+            }catch (Exception e){
+
+            }
+            System.out.println("Closest RSSI: " + closestRssi);
+        }
+    }
+
+    private void scanDistanceToNeighbours() {
+        int leftStrength, rightStrength;
+        if (left != null) {
+            leftStrength = left.getRssi();
+            System.out.println("Left rssi: " + leftStrength);
+        }
+        if (right != null) {
+            rightStrength = right.getRssi();
+            System.out.println("Right rssi: " + rightStrength);
+        }
+        try {
+            Thread.sleep(100);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Override
+    public void run() {
+        while(true) {
+            if (left == null && right == null) {
+                searchForNeighbours();
+            } else {
+                scanDistanceToNeighbours();
             }
         }
     }
