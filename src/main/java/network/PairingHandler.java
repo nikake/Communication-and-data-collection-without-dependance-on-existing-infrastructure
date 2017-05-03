@@ -206,13 +206,26 @@ public class PairingHandler implements Runnable {
 
     private void scanDistanceToNeighbours() {
         int leftStrength, rightStrength;
+        int leftFailures = 0, rightFailures = 0;
         if (left != null) {
             leftStrength = left.getRssi();
+            if(leftStrength <= -100)
+                leftFailures++;
+            else
+                leftFailures = 0;
             System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
+            if(leftFailures == 10)
+                left = null;
         }
         if (right != null) {
             rightStrength = right.getRssi();
+            if(rightStrength <= -100)
+                rightFailures++;
+            else
+                rightFailures = 0;
             System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
+            if(rightFailures == 10)
+                right = null;
         }
         try {
             Thread.sleep(300);
