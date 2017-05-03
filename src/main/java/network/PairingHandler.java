@@ -1,11 +1,13 @@
 package main.java.network;
 
 import main.java.Application;
+import main.java.log.Logger;
 import main.java.messaging.DataPacket;
 import main.java.messaging.Message;
 import main.java.util.Device;
 import main.java.util.InformationHolder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -48,6 +50,7 @@ public class PairingHandler implements Runnable {
     private boolean startLeft(Device device) {
         BluetoothScanner bs = new BluetoothScanner(device);
         if(leftRef.compareAndSet(nullBS, bs)) {
+            Logger.info("New left neighbour: [" + left.device + "]");
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
@@ -79,6 +82,7 @@ public class PairingHandler implements Runnable {
     private boolean startRight(Device device) {
         BluetoothScanner bs = new BluetoothScanner(device);
         if(rightRef.compareAndSet(nullBS, bs)) {
+            Logger.info("New right neighbour: [" + left.device + "]");
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
@@ -113,6 +117,7 @@ public class PairingHandler implements Runnable {
 
     private void searchForNeighbours() {
         HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
+        ArrayList<Device> checkedDevices = new ArrayList<>();
         CopyOnWriteArrayList<Device> devices;
 
         while((devices = InformationHolder.getDevices()).isEmpty()) {
@@ -133,13 +138,14 @@ public class PairingHandler implements Runnable {
         } catch (Exception e) {
 
         }
+
         while(left == null && right == null) {
-            BluetoothScanner closest = null;
             int closestRssi = -100;
+            BluetoothScanner closest = null;
             // Pair with closest device.
             for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
                 // Check if left or right is available in the other device.
-                if(me.getKey().getRssi() >= closestRssi) {
+                if(!checkedDevices.contains(me.getKey().device) && me.getKey().getRssi() >= closestRssi) {
                     closest = me.getKey();
                     closestRssi = me.getKey().getRssi();
                 }
@@ -151,6 +157,7 @@ public class PairingHandler implements Runnable {
                     pendingRight = true;
                     remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
                     remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
+                    checkedDevices.add(closest.device);
                 } catch (Exception e){
 
                 }
