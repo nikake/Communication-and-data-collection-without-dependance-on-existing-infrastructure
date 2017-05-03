@@ -48,7 +48,9 @@ public class PairingHandler implements Runnable {
     }
 
     private boolean startLeft(Device device) {
+        Logger.info("Attempting to set device " + device.ipAddress + " as new left neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
+
         if(leftRef.compareAndSet(nullBS, bs)) {
             Logger.info("New left neighbour: [" + left.device + "]");
             Thread btScanner = new Thread(bs);
@@ -80,6 +82,7 @@ public class PairingHandler implements Runnable {
     }
 
     private boolean startRight(Device device) {
+        Logger.info("Attempting to set device " + device.ipAddress + " as new right neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
         if(rightRef.compareAndSet(nullBS, bs)) {
             Logger.info("New right neighbour: [" + left.device + "]");
