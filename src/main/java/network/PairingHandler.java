@@ -52,6 +52,7 @@ public class PairingHandler implements Runnable {
         BluetoothScanner bs = new BluetoothScanner(device);
 
         if(leftRef.compareAndSet(nullBS, bs)) {
+            left = bs;
             Logger.info("New left neighbour: [" + left.device + "]");
             Thread btScanner = new Thread(bs);
             btScanner.start();
@@ -85,7 +86,8 @@ public class PairingHandler implements Runnable {
         Logger.info("Attempting to set device " + device.ipAddress + " as new right neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
         if(rightRef.compareAndSet(nullBS, bs)) {
-            Logger.info("New right neighbour: [" + left.device + "]");
+            right = bs;
+            Logger.info("New right neighbour: [" + right.device + "]");
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
@@ -172,6 +174,13 @@ public class PairingHandler implements Runnable {
 
                 }
             }
+            if(left == null && right == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+
+                }
+            }
             System.out.println("Closest RSSI: " + closestRssi);
         }
         for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
@@ -192,7 +201,7 @@ public class PairingHandler implements Runnable {
             System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
         }
         try {
-            Thread.sleep(100);
+            Thread.sleep(300);
         } catch (Exception e) {
 
         }
