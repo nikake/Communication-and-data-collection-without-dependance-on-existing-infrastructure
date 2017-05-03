@@ -204,9 +204,10 @@ public class PairingHandler implements Runnable {
         }
     }
 
+    private int leftStrength, rightStrength;
+    private int leftFailures = 0, rightFailures = 0;
+
     private void scanDistanceToNeighbours() {
-        int leftStrength, rightStrength;
-        int leftFailures = 0, rightFailures = 0;
         if (left != null) {
             leftStrength = left.getRssi();
             if(leftStrength <= -100)
@@ -214,8 +215,10 @@ public class PairingHandler implements Runnable {
             else
                 leftFailures = 0;
             System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
-            if(leftFailures == 10)
+            if(leftFailures == 10) {
                 left = null;
+                leftFailures = 0;
+            }
         }
         if (right != null) {
             rightStrength = right.getRssi();
@@ -224,8 +227,10 @@ public class PairingHandler implements Runnable {
             else
                 rightFailures = 0;
             System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
-            if(rightFailures == 10)
+            if(rightFailures == 10) {
                 right = null;
+                rightFailures = 0;
+            }
         }
         try {
             Thread.sleep(300);
