@@ -1,7 +1,11 @@
 package main.java.util;
 
 
+import main.java.network.LocalClient;
+import main.java.network.RemoteClient;
+
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InformationHolder {
@@ -15,6 +19,9 @@ public class InformationHolder {
     public static void setDevices(Collection<Device> devices) {
         InformationHolder.devices.addAll(devices);
     }
+
+    public static ConcurrentHashMap<String, RemoteClient> remoteClients = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, LocalClient> localClients = new ConcurrentHashMap<>();
 }
 
 
