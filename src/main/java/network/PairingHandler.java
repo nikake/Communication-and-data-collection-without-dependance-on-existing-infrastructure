@@ -40,11 +40,11 @@ public class PairingHandler implements Runnable {
     private boolean pendingRight;
 
     public BluetoothScanner getLeft() {
-        return left;
+        return leftRef.get();
     }
 
     public BluetoothScanner getRight() {
-        return right;
+        return rightRef.get();
     }
 
     private boolean startLeft(Device device) {
@@ -52,18 +52,20 @@ public class PairingHandler implements Runnable {
         BluetoothScanner bs = new BluetoothScanner(device);
 
         if(leftRef.compareAndSet(nullBS, bs)) {
-            left = bs;
-            Logger.info("New left neighbour: [" + left.device + "]");
+            //left = bs;
+            Logger.info("New left neighbour: [" + leftRef.get().device + "]");
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
+        } else {
+            Logger.error("Failed to set new left neighbour!\n\nLeft: " + leftRef.get() + "\n\nBs: " + bs);
         }
         return false;
     }
 
     public boolean setLeft(Device device) {
         //om den kan sätta, sätt device till left
-        if (left == null && (right == null || !right.device.equals(device))) {
+        if (leftRef.get() == null && (rightRef.get() == null || !rightRef.get().device.equals(device))) {
             return startLeft(device);
         }
         return false;
@@ -72,7 +74,7 @@ public class PairingHandler implements Runnable {
     public boolean setLeft(Device device, Message message) {
         //om den kan sätta, sätt device till left
         if(message == Message.OK) {
-            if (left == null && (right == null || !right.device.equals(device))) {
+            if (leftRef.get() == null && (rightRef.get() == null || !rightRef.get().device.equals(device))) {
                 boolean returnValue = startLeft(device);
                 pendingLeft = false;
                 return returnValue;
@@ -86,18 +88,20 @@ public class PairingHandler implements Runnable {
         Logger.info("Attempting to set device " + device.ipAddress + " as new right neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
         if(rightRef.compareAndSet(nullBS, bs)) {
-            right = bs;
-            Logger.info("New right neighbour: [" + right.device + "]");
+            //right = bs;
+            Logger.info("New right neighbour: [" + rightRef.get().device + "]");
             Thread btScanner = new Thread(bs);
             btScanner.start();
             return true;
+        } else {
+            Logger.error("Failed to set new right neighbour!\n\nRight: " + right + "\n\nbs: " + bs);
         }
         return false;
     }
 
     public boolean setRight(Device device) {
         //om den kan sätta, sätt device till right
-        if (right == null && (left == null || !left.device.equals(device))) {
+        if (rightRef.get() == null && (leftRef.get() == null || !leftRef.get().device.equals(device))) {
             return startRight(device);
         }
         return false;
@@ -106,7 +110,7 @@ public class PairingHandler implements Runnable {
     public boolean setRight(Device device, Message message) {
         //om den kan sätta, sätt device till right
         if (message == Message.OK) {
-            if (right == null && (left == null || !left.device.equals(device))) {
+            if (rightRef.get() == null && (leftRef.get() == null || !leftRef.get().device.equals(device))) {
                 boolean returnValue = startRight(device);
                 pendingRight = false;
                 return returnValue;
@@ -122,14 +126,14 @@ public class PairingHandler implements Runnable {
 
     private void updateRoutingTable(){
         Device[] value = new Device[2];
-        if(left == null)
+        if(leftRef.get() == null)
             value[0] = null;
         else
-            value[0] = left.device;
-        if(right == null)
+            value[0] = leftRef.get().device;
+        if(rightRef.get() == null)
             value[1] = null;
         else
-            value[1] = right.device;
+            value[1] = rightRef.get().device;
 
         RoutingTable.add(Application.getLocalDevice(), value);
     }
@@ -158,7 +162,7 @@ public class PairingHandler implements Runnable {
 
         }
 
-        while(left == null && right == null) {
+        while(leftRef.get() == null && rightRef.get() == null) {
             int closestRssi = -100;
             BluetoothScanner closest = null;
             boolean foundNoDevices = true;
@@ -187,12 +191,12 @@ public class PairingHandler implements Runnable {
             while ((pendingLeft || pendingRight) && attempt < maxTries) {
                 try {
                     Thread.sleep(100);
-                    maxTries++;
+                    attempt++;
                 } catch (Exception e) {
 
                 }
             }
-            if(left == null && right == null) {
+            if(leftRef.get() == null && rightRef.get() == null) {
                 try {
                     Thread.sleep(1000);
                 } catch (Exception e) {
@@ -214,27 +218,27 @@ public class PairingHandler implements Runnable {
     private int leftFailures = 0, rightFailures = 0;
 
     private void scanDistanceToNeighbours() {
-        if (left != null) {
-            leftStrength = left.getRssi();
+        if (leftRef.get() != null) {
+            leftStrength = leftRef.get().getRssi();
             if(leftStrength <= -100)
                 leftFailures++;
             else
                 leftFailures = 0;
-            System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
+            System.out.println("Left [IP: " + leftRef.get().device.ipAddress + "] rssi: " + leftStrength);
             if(leftFailures == 10) {
-                left = null;
+                leftRef.set(null);
                 leftFailures = 0;
             }
         }
-        if (right != null) {
-            rightStrength = right.getRssi();
+        if (rightRef.get() != null) {
+            rightStrength = rightRef.get().getRssi();
             if(rightStrength <= -100)
                 rightFailures++;
             else
                 rightFailures = 0;
-            System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
+            System.out.println("Right [IP: " + rightRef.get().device.ipAddress + "] rssi: " + rightStrength);
             if(rightFailures == 10) {
-                right = null;
+                rightRef.set(null);
                 rightFailures = 0;
             }
         }
@@ -248,7 +252,7 @@ public class PairingHandler implements Runnable {
     @Override
     public void run() {
         while(true) {
-            if (left == null && right == null) {
+            if (leftRef.get() == null && rightRef.get() == null) {
                 searchForNeighbours();
             } else {
                 scanDistanceToNeighbours();

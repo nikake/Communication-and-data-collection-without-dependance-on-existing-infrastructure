@@ -62,6 +62,7 @@ public class DeviceHandler implements Runnable {
         devices.forEach((String ip, Device d) -> {
             if(!foundIps.contains(ip)) {
                 removeDevice(ip);
+                InformationHolder.removeDevice(d);
                 updated = true;
             }
         });

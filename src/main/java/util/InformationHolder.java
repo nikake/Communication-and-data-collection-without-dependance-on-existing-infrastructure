@@ -17,7 +17,11 @@ public class InformationHolder {
     }
 
     public static void setDevices(Collection<Device> devices) {
-        InformationHolder.devices.addAll(devices);
+        InformationHolder.devices.addAllAbsent(devices);
+    }
+
+    public static void removeDevice(Device device){
+        InformationHolder.devices.remove(device);
     }
 
     public static ConcurrentHashMap<String, RemoteClient> remoteClients = new ConcurrentHashMap<>();
