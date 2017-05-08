@@ -147,12 +147,14 @@ public class PairingHandler implements Runnable {
         while(left == null && right == null) {
             int closestRssi = -100;
             BluetoothScanner closest = null;
+            boolean foundNoDevices = true;
             // Pair with closest device.
             for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
                 // Check if left or right is available in the other device.
                 if(!checkedDevices.contains(me.getKey().device) && me.getKey().getRssi() >= closestRssi) {
                     closest = me.getKey();
                     closestRssi = me.getKey().getRssi();
+                    foundNoDevices = false;
                 }
             }
             if(closest != null) {
@@ -167,9 +169,11 @@ public class PairingHandler implements Runnable {
 
                 }
             }
-            while (pendingLeft || pendingRight) {
+            int maxTries = 20, attempt = 0;
+            while ((pendingLeft || pendingRight) && attempt < maxTries) {
                 try {
                     Thread.sleep(100);
+                    maxTries++;
                 } catch (Exception e) {
 
                 }
@@ -181,6 +185,8 @@ public class PairingHandler implements Runnable {
 
                 }
             }
+            if(foundNoDevices)
+                checkedDevices.clear();
             System.out.println("Closest RSSI: " + closestRssi);
         }
         for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
