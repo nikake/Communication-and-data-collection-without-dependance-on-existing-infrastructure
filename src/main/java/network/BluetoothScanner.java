@@ -30,7 +30,7 @@ public class BluetoothScanner implements Runnable {
     public void run() {
         while(true) {
             String[] rssi = commandExecutor.execute((CMD + " " + device.btAddress).split("\\s+"));
-            int rssiValue = -100;
+            int rssiValue = -300;
             if(rssi.length > 0 && !rssi[0].isEmpty() && !rssi[0].equals("device not found"))
                 rssiValue = Integer.valueOf(rssi[0]);
             addNewRssiValue(rssiValue);
