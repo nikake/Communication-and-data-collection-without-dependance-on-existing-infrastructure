@@ -120,6 +120,20 @@ public class PairingHandler implements Runnable {
 
     }
 
+    private void updateRoutingTable(){
+        Device[] value = new Device[2];
+        if(left == null)
+            value[0] = null;
+        else
+            value[0] = left.device;
+        if(right == null)
+            value[1] = null;
+        else
+            value[1] = right.device;
+
+        RoutingTable.add(Application.getLocalDevice(), value);
+    }
+
     private void searchForNeighbours() {
         HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
         ArrayList<Device> checkedDevices = new ArrayList<>();
