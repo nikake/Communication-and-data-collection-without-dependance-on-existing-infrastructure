@@ -40,8 +40,11 @@ public class DeviceScanner {
     public ArrayList<String> scan() {
         addresses.parallelStream().forEach(addr -> {
             try {
-                if (!foundDevices.contains(addr) && addr.isReachable(MAX_TIMEOUT))
-                    foundDevices.add(addr.getHostAddress());
+                if(addr.isReachable(MAX_TIMEOUT)) {
+                    if (!foundDevices.contains(addr.getHostAddress()))
+                        foundDevices.add(addr.getHostAddress());
+                } else if (foundDevices.contains(addr.getHostAddress()))
+                    foundDevices.remove(addr.getHostAddress());
             } catch (Exception e) {
                 Logger.error("Exception while adding device with IP " + addr + " to foundDevices while scanning. Exception: " + e.getMessage());
             }
