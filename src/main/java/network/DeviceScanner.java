@@ -41,7 +41,7 @@ public class DeviceScanner {
         addresses.parallelStream().forEach(addr -> {
             try {
                 if(addr.isReachable(MAX_TIMEOUT)) {
-                    if (!foundDevices.contains(addr.getHostAddress()))
+                    if(!foundDevices.contains(addr.getHostAddress()))
                         foundDevices.add(addr.getHostAddress());
                 } else if (foundDevices.contains(addr.getHostAddress()))
                     foundDevices.remove(addr.getHostAddress());
