@@ -15,7 +15,6 @@ public class DeviceScanner {
     private final static Executor POOL = Executors.newFixedThreadPool(MAX_CLIENTS);
 
     public DeviceScanner() {
-        foundDevices = new ArrayList<>();
         addresses = new ArrayList<>();
         initAddresses();
     }
@@ -38,13 +37,11 @@ public class DeviceScanner {
         Scan for devices every 50 (minimum) milliseconds and add them to the collection 'foundDevices' if it has not already been discovered and is reachable.
      */
     public ArrayList<String> scan() {
+        foundDevices = new ArrayList<>();
         addresses.parallelStream().forEach(addr -> {
             try {
-                if(addr.isReachable(MAX_TIMEOUT)) {
-                    if(!foundDevices.contains(addr.getHostAddress()))
-                        foundDevices.add(addr.getHostAddress());
-                } else if (foundDevices.contains(addr.getHostAddress()))
-                    foundDevices.remove(addr.getHostAddress());
+                if(addr.isReachable(MAX_TIMEOUT))
+                    foundDevices.add(addr.getHostAddress());
             } catch (Exception e) {
                 Logger.error("Exception while adding device with IP " + addr + " to foundDevices while scanning. Exception: " + e.getMessage());
             }
