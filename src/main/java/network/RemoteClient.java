@@ -95,22 +95,26 @@ public class RemoteClient implements Runnable {
         Logger.info("RemoteClient - Received from: " + dataPacket.SENDER.ipAddress + " Message: " + dataPacket.MESSAGE.name());
         switch (dataPacket.MESSAGE) {
             case SET_LEFT_NEIGHBOUR_OK:
-                if (!PairingHandler.getInstance().setLeft(dataPacket.SENDER, dataPacket.MESSAGE)) {
+                if (!PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, dataPacket.MESSAGE)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_LEFT_NEIGHBOUR_FAILURE, null, null);
-                    hostWriter.writeObject(returnPacket);
+                } else {
+                    returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_LEFT_NEIGHBOUR_SUCCESS, null, null);
                 }
+                hostWriter.writeObject(returnPacket);
                 break;
             case SET_LEFT_NEIGHBOUR_DENIED:
-                PairingHandler.getInstance().setLeft(dataPacket.SENDER, dataPacket.MESSAGE);
+                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, dataPacket.MESSAGE);
                 break;
             case SET_RIGHT_NEIGHBOUR_OK:
-                if (!PairingHandler.getInstance().setRight(dataPacket.SENDER, dataPacket.MESSAGE)) {
+                if (!PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, dataPacket.MESSAGE)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_RIGHT_NEIGHBOUR_FAILURE, null, null);
-                    hostWriter.writeObject(returnPacket);
+                } else {
+                    returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_RIGHT_NEIGHBOUR_SUCCESS, null, null);
                 }
+                hostWriter.writeObject(returnPacket);
                 break;
             case SET_RIGHT_NEIGHBOUR_DENIED:
-                PairingHandler.getInstance().setRight(dataPacket.SENDER, Message.DENIED);
+                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.DENIED);
                 break;
             default:
                 break;

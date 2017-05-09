@@ -68,7 +68,7 @@ public class LocalClient implements Runnable {
             case TOO_FAR_AWAY:
                 break;
             case SET_LEFT_NEIGHBOUR:
-                if(PairingHandler.getInstance().setRight(dataPacket.SENDER)) {
+                if(PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, dataPacket.MESSAGE)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_OK, null, null);
                 } else {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_DENIED, null, null);
@@ -76,7 +76,7 @@ public class LocalClient implements Runnable {
                 clientWriter.writeObject(returnPacket);
                 break;
             case SET_RIGHT_NEIGHBOUR:
-                if(PairingHandler.getInstance().setLeft(dataPacket.SENDER)) {
+                if(PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, dataPacket.MESSAGE)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_OK, null, null);
                 } else {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_DENIED, null, null);
@@ -84,10 +84,10 @@ public class LocalClient implements Runnable {
                 clientWriter.writeObject(returnPacket);
                 break;
             case SET_LEFT_NEIGHBOUR_FAILURE:
-                PairingHandler.getInstance().setRight(dataPacket.SENDER, Message.SET_LEFT_NEIGHBOUR_FAILURE);
+                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.SET_LEFT_NEIGHBOUR_FAILURE);
                 break;
             case SET_RIGHT_NEIGHBOUR_FAILURE:
-                PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.SET_RIGHT_NEIGHBOUR_FAILURE);
+                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.SET_RIGHT_NEIGHBOUR_FAILURE);
                 break;
             case GET_INFO:
                 returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.GET_INFO_OK, null, null);
