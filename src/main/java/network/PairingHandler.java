@@ -61,13 +61,14 @@ public class PairingHandler implements Runnable {
         Thread btScanner = new Thread(bs);
         btScanner.start();
         sleep(1000);
-        if(leftRef.compareAndSet(nullBS, bs)) {
-            Logger.info("New left neighbour: [" + leftRef.get().device + "]");
-            return true;
-        } else {
-            Logger.error("Failed to set new left neighbour!\n\nLeft: " + leftRef.get() + "\n\nBs: " + bs);
+        synchronized (pairingLock){
+            if((rightRef.get() == null || !rightRef.get().device.equals(device)) && leftRef.compareAndSet(nullBS, bs)) {
+                Logger.info("New left neighbour: [" + leftRef.get().device + "]");
+                return true;
+            }
         }
-         btScanner.interrupt();
+        Logger.error("Failed to set new left neighbour!\n\nLeft: " + leftRef.get() + "\n\nBs: " + bs);
+        btScanner.interrupt();
         return false;
     }
 
@@ -98,13 +99,13 @@ public class PairingHandler implements Runnable {
         Thread btScanner = new Thread(bs);
         btScanner.start();
         sleep(1000);
-        if(rightRef.compareAndSet(nullBS, bs)) {
-            //right = bs;
-            Logger.info("New right neighbour: [" + rightRef.get().device + "]");
-            return true;
-        } else {
-            Logger.error("Failed to set new right neighbour!\n\nRight: " + right + "\n\nbs: " + bs);
+        synchronized (pairingLock){
+            if((leftRef.get() == null || !leftRef.get().device.equals(device)) && rightRef.compareAndSet(nullBS, bs)) {
+                Logger.info("New right neighbour: [" + rightRef.get().device + "]");
+                return true;
+            }
         }
+        Logger.error("Failed to set new right neighbour!\n\nRight: " + right + "\n\nbs: " + bs);
         btScanner.interrupt();
         return false;
     }
