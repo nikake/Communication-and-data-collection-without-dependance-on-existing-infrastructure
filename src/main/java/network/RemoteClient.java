@@ -95,7 +95,7 @@ public class RemoteClient implements Runnable {
         Logger.info("RemoteClient - Received from: " + dataPacket.SENDER.ipAddress + " Message: " + dataPacket.MESSAGE.name());
         switch (dataPacket.MESSAGE) {
             case SET_LEFT_NEIGHBOUR_OK:
-                if (PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.OK)) {
+                if (!PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.OK)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_LEFT_NEIGHBOUR_FAILURE, null, null);
                     hostWriter.writeObject(returnPacket);
                 }
@@ -104,7 +104,7 @@ public class RemoteClient implements Runnable {
                 PairingHandler.getInstance().setLeft(dataPacket.SENDER, dataPacket.MESSAGE);
                 break;
             case SET_RIGHT_NEIGHBOUR_OK:
-                if (PairingHandler.getInstance().setRight(dataPacket.SENDER, dataPacket.MESSAGE)) {
+                if (!PairingHandler.getInstance().setRight(dataPacket.SENDER, dataPacket.MESSAGE)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_RIGHT_NEIGHBOUR_FAILURE, null, null);
                     hostWriter.writeObject(returnPacket);
                 }
