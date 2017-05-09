@@ -130,7 +130,8 @@ public class PairingHandler implements Runnable {
                     return setRight(device);
                 case SET_RIGHT_NEIGHBOUR_DENIED:
                 case SET_RIGHT_NEIGHBOUR_FAILURE:
-                    pendingLeft = null;
+                    if(device.equals(pendingLeft))
+                        pendingLeft = null;
                     break;
                 case SET_RIGHT_NEIGHBOUR_SUCCESS:
                     return setLeft(device);
@@ -140,7 +141,8 @@ public class PairingHandler implements Runnable {
                     return setLeft(device);
                 case SET_LEFT_NEIGHBOUR_DENIED:
                 case SET_LEFT_NEIGHBOUR_FAILURE:
-                    pendingRight = null;
+                    if(device.equals(pendingRight))
+                        pendingRight = null;
                     break;
                 case SET_LEFT_NEIGHBOUR_SUCCESS:
                     return setRight(device);
