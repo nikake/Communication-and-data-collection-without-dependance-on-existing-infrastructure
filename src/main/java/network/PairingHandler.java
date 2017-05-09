@@ -47,19 +47,27 @@ public class PairingHandler implements Runnable {
         return rightRef.get();
     }
 
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (Exception e) {
+            Logger.error("Error while sleeping.");
+        }
+    }
+
     private boolean startLeft(Device device) {
         Logger.info("Attempting to set device " + device.ipAddress + " as new left neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
-
+        Thread btScanner = new Thread(bs);
+        btScanner.start();
+        sleep(1000);
         if(leftRef.compareAndSet(nullBS, bs)) {
-            //left = bs;
             Logger.info("New left neighbour: [" + leftRef.get().device + "]");
-            Thread btScanner = new Thread(bs);
-            btScanner.start();
             return true;
         } else {
             Logger.error("Failed to set new left neighbour!\n\nLeft: " + leftRef.get() + "\n\nBs: " + bs);
         }
+         btScanner.interrupt();
         return false;
     }
 
@@ -87,15 +95,17 @@ public class PairingHandler implements Runnable {
     private boolean startRight(Device device) {
         Logger.info("Attempting to set device " + device.ipAddress + " as new right neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
+        Thread btScanner = new Thread(bs);
+        btScanner.start();
+        sleep(1000);
         if(rightRef.compareAndSet(nullBS, bs)) {
             //right = bs;
             Logger.info("New right neighbour: [" + rightRef.get().device + "]");
-            Thread btScanner = new Thread(bs);
-            btScanner.start();
             return true;
         } else {
             Logger.error("Failed to set new right neighbour!\n\nRight: " + right + "\n\nbs: " + bs);
         }
+        btScanner.interrupt();
         return false;
     }
 
