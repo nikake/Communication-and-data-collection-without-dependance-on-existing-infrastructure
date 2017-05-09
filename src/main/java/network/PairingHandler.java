@@ -82,14 +82,14 @@ public class PairingHandler implements Runnable {
 
     public boolean setLeft(Device device, Message message) {
         //om den kan sätta, sätt device till left
-        if(message == Message.OK) {
+        if(message == Message.SET_LEFT_NEIGHBOUR_OK) {
             if (leftRef.get() == null && (rightRef.get() == null || !rightRef.get().device.equals(device))) {
                 boolean returnValue = startLeft(device);
                 pendingLeft = false;
                 return returnValue;
             }
         } else if (message == Message.SET_LEFT_NEIGHBOUR_FAILURE) {
-            leftRef.set(nullBS);
+            leftRef.set(null);
         }
         pendingLeft = false;
         return false;
@@ -122,14 +122,14 @@ public class PairingHandler implements Runnable {
 
     public boolean setRight(Device device, Message message) {
         //om den kan sätta, sätt device till right
-        if (message == Message.OK) {
+        if (message == Message.SET_RIGHT_NEIGHBOUR_OK) {
             if (rightRef.get() == null && (leftRef.get() == null || !leftRef.get().device.equals(device))) {
                 boolean returnValue = startRight(device);
                 pendingRight = false;
                 return returnValue;
             }
         } else if (message == Message.SET_RIGHT_NEIGHBOUR_FAILURE) {
-            rightRef.set(nullBS);
+            rightRef.set(null);
         }
         pendingRight = false;
         return false;

@@ -60,36 +60,27 @@ public class LocalClient implements Runnable {
     }
 
     private void readMessage(DataPacket dataPacket) throws IOException {
-        DataPacket returnPacket;
+        DataPacket returnPacket = null;
+        Logger.info("LocalClient - Received message from " + dataPacket.SENDER.ipAddress + ":" + dataPacket.MESSAGE.name());
         switch (dataPacket.MESSAGE) {
             case TOO_CLOSE:
-                Logger.info("Too close to neighbour " + dataPacket.SENDER.ipAddress + ".");
                 break;
             case TOO_FAR_AWAY:
-                Logger.info("Too far away from neighbour " + dataPacket.SENDER.ipAddress + ".");
                 break;
             case SET_LEFT_NEIGHBOUR:
-                Logger.info(dataPacket.SENDER.ipAddress + " asking to set this device as its left neighbour.");
                 if(PairingHandler.getInstance().setRight(dataPacket.SENDER)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_OK, null, null);
-                    Logger.info("Success! Sending returnPacket Message.SET_LEFT_NEIGHBOUR_OK to " + dataPacket.SENDER.ipAddress);
                 } else {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_LEFT_NEIGHBOUR_DENIED, null, null);
-                    Logger.info("Failure! Sending returnPacket Message.SET_LEFT_NEIGHBOUR_DENIED to " + dataPacket.SENDER.ipAddress);
                 }
-                Logger.info("Sending return message to: " + dataPacket.SENDER.ipAddress);
                 clientWriter.writeObject(returnPacket);
                 break;
             case SET_RIGHT_NEIGHBOUR:
-                Logger.info(dataPacket.SENDER.ipAddress + " asking to set this device as its right neighbour.");
                 if(PairingHandler.getInstance().setLeft(dataPacket.SENDER)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_OK, null, null);
-                    Logger.info("Success! Sending returnPacket Message.SET_RIGHT_NEIGHBOUR_OK to " + dataPacket.SENDER.ipAddress);
                 } else {
                     returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.SET_RIGHT_NEIGHBOUR_DENIED, null, null);
-                    Logger.info("Failure! Sending returnPacket Message.SET_RIGHT_NEIGHBOUR_DENIED to " + dataPacket.SENDER.ipAddress);
                 }
-                Logger.info("Sending return message to: " + dataPacket.SENDER.ipAddress);
                 clientWriter.writeObject(returnPacket);
                 break;
             case SET_LEFT_NEIGHBOUR_FAILURE:
@@ -107,6 +98,10 @@ public class LocalClient implements Runnable {
             default:
                 break;
         }
+        if(returnPacket != null)
+            Logger.info("LocalClient - Sent message to " + returnPacket.RECEIVER.ipAddress + ":" + returnPacket.MESSAGE.name());
+        else
+            Logger.info("LocalClient - Did not send a response to " + dataPacket.SENDER.ipAddress);
     }
 
     public void sendMessage(DataPacket dataPacket) throws IOException {

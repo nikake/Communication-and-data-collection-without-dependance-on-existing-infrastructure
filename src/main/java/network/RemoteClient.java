@@ -91,7 +91,7 @@ public class RemoteClient implements Runnable {
     }
 
     private void readMessage(DataPacket dataPacket) throws IOException {
-        DataPacket returnPacket;
+        DataPacket returnPacket = null;
         Logger.info("Received from: " + dataPacket.SENDER.ipAddress + " Message: " + dataPacket.MESSAGE.name());
         switch (dataPacket.MESSAGE) {
             case SET_LEFT_NEIGHBOUR_OK:
@@ -101,10 +101,10 @@ public class RemoteClient implements Runnable {
                 }
                 break;
             case SET_LEFT_NEIGHBOUR_DENIED:
-                PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.DENIED);
+                PairingHandler.getInstance().setLeft(dataPacket.SENDER, dataPacket.MESSAGE);
                 break;
             case SET_RIGHT_NEIGHBOUR_OK:
-                if (PairingHandler.getInstance().setRight(dataPacket.SENDER, Message.OK)) {
+                if (PairingHandler.getInstance().setRight(dataPacket.SENDER, dataPacket.MESSAGE)) {
                     returnPacket = new DataPacket(Application.getLocalDevice(), hostDevice, Message.SET_RIGHT_NEIGHBOUR_FAILURE, null, null);
                     hostWriter.writeObject(returnPacket);
                 }
@@ -115,6 +115,10 @@ public class RemoteClient implements Runnable {
             default:
                 break;
         }
+        if(returnPacket != null)
+            Logger.info("RemoteClient - Sent message to " + returnPacket.RECEIVER.ipAddress + ":" + returnPacket.MESSAGE.name());
+        else
+            Logger.info("RemoteClient - Did not send a response to " + dataPacket.SENDER.ipAddress);
     }
 
     public void sendMessage(DataPacket dataPacket) throws IOException {
