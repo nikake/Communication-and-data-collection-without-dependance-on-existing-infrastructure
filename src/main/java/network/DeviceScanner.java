@@ -9,7 +9,7 @@ import java.util.concurrent.*;
 
 public class DeviceScanner {
     private final static int MAX_CLIENTS = 256;
-    private final static int MAX_TIMEOUT = 50;
+    private final static int MAX_TIMEOUT = 100;
     private ArrayList<String> foundDevices;
     private ArrayList<InetAddress> addresses;
     private final static Executor POOL = Executors.newFixedThreadPool(MAX_CLIENTS);
