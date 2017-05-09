@@ -92,7 +92,7 @@ public class RemoteClient implements Runnable {
 
     private void readMessage(DataPacket dataPacket) throws IOException {
         DataPacket returnPacket = null;
-        Logger.info("Received from: " + dataPacket.SENDER.ipAddress + " Message: " + dataPacket.MESSAGE.name());
+        Logger.info("RemoteClient - Received from: " + dataPacket.SENDER.ipAddress + " Message: " + dataPacket.MESSAGE.name());
         switch (dataPacket.MESSAGE) {
             case SET_LEFT_NEIGHBOUR_OK:
                 if (PairingHandler.getInstance().setLeft(dataPacket.SENDER, Message.OK)) {
