@@ -62,7 +62,7 @@ public class PairingHandler implements Runnable {
         btScanner.start();
         sleep(1000);
         synchronized (pairingLock){
-            if((rightRef.get() == null || !rightRef.get().device.equals(device)) && leftRef.compareAndSet(nullBS, bs)) {
+            if(leftRef.get() == null && (rightRef.get() == null || !rightRef.get().device.equals(device)) && leftRef.compareAndSet(nullBS, bs)) {
                 Logger.info("New left neighbour: [" + leftRef.get().device + "]");
                 return true;
             }
@@ -102,7 +102,7 @@ public class PairingHandler implements Runnable {
         btScanner.start();
         sleep(1000);
         synchronized (pairingLock){
-            if((leftRef.get() == null || !leftRef.get().device.equals(device)) && rightRef.compareAndSet(nullBS, bs)) {
+            if(rightRef.get() == null && (leftRef.get() == null || !leftRef.get().device.equals(device)) && rightRef.compareAndSet(nullBS, bs)) {
                 Logger.info("New right neighbour: [" + rightRef.get().device + "]");
                 return true;
             }
