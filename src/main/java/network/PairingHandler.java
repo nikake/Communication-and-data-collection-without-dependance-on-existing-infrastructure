@@ -50,14 +50,18 @@ public class PairingHandler implements Runnable {
     private boolean startLeft(Device device) {
         Logger.info("Attempting to set device " + device.ipAddress + " as new left neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
+        Thread btScanner = new Thread(bs);
+        btScanner.start();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
 
+        }
         if(leftRef.compareAndSet(nullBS, bs)) {
-            left = bs;
             Logger.info("New left neighbour: [" + left.device + "]");
-            Thread btScanner = new Thread(bs);
-            btScanner.start();
             return true;
         }
+        btScanner.interrupt();
         return false;
     }
 
@@ -85,19 +89,24 @@ public class PairingHandler implements Runnable {
     private boolean startRight(Device device) {
         Logger.info("Attempting to set device " + device.ipAddress + " as new right neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
+        Thread btScanner = new Thread(bs);
+        btScanner.start();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+
+        }
         if(rightRef.compareAndSet(nullBS, bs)) {
-            right = bs;
             Logger.info("New right neighbour: [" + right.device + "]");
-            Thread btScanner = new Thread(bs);
-            btScanner.start();
             return true;
         }
+        btScanner.interrupt();
         return false;
     }
 
     public boolean setRight(Device device) {
         //om den kan sätta, sätt device till right
-        if (right == null && (left == null || !left.device.equals(device))) {
+        if (rightRef.get() == null && (leftRef.get() == null || !left.device.equals(device))) {
             return startRight(device);
         }
         return false;
@@ -222,7 +231,7 @@ public class PairingHandler implements Runnable {
                 leftFailures = 0;
             System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
             if(leftFailures == 10) {
-                left = null;
+                leftRef.set(null);
                 leftFailures = 0;
             }
         }
@@ -234,7 +243,7 @@ public class PairingHandler implements Runnable {
                 rightFailures = 0;
             System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
             if(rightFailures == 10) {
-                right = null;
+                rightRef.set(null);
                 rightFailures = 0;
             }
         }
