@@ -59,8 +59,11 @@ public class PairingHandler implements Runnable {
 
     private boolean setLeft(Device device) {
         if (pendingLeft.equals(device)) {
-            left = startNewNeighbour(device);
-            return true;
+            if(left == null && (right == null || !right.device.equals(device))) {
+                left = startNewNeighbour(device);
+                pendingLeft = null;
+                return true;
+            }
         }
         return false;
     }
@@ -77,8 +80,11 @@ public class PairingHandler implements Runnable {
 
     private boolean setRight(Device device) {
         if (pendingRight.equals(device)) {
-            right = startNewNeighbour(device);
-            return true;
+            if(right == null && (left == null || !left.device.equals(device))) {
+                right = startNewNeighbour(device);
+                pendingRight = null;
+                return true;
+            }
         }
         return false;
     }
