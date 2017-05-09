@@ -110,6 +110,7 @@ public class LocalClient implements Runnable {
     private void close() {
         try {
             InformationHolder.localClients.remove(client.getInetAddress().getHostAddress());
+            Logger.info("Closing socket for client: " + clientDevice);
             if (client != null)
                 client.close();
             if (clientWriter != null)

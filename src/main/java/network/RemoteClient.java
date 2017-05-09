@@ -118,6 +118,7 @@ public class RemoteClient implements Runnable {
     private void close() {
         try {
             InformationHolder.remoteClients.remove(host.getInetAddress().getHostAddress());
+            Logger.info("Closing socket for host: " + hostDevice);
             if (host != null)
                 host.close();
             if (hostReader != null)
