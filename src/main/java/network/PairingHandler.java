@@ -7,6 +7,7 @@ import main.java.messaging.Message;
 import main.java.util.Device;
 import main.java.util.InformationHolder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +37,8 @@ public class PairingHandler implements Runnable {
         return instance;
     }
 
-    private boolean pendingLeft;
-    private boolean pendingRight;
+    private Device pendingLeft;
+    private Device pendingRight;
 
     public BluetoothScanner getLeft() {
         return leftRef.get();
@@ -51,23 +52,23 @@ public class PairingHandler implements Runnable {
         try {
             Thread.sleep(millis);
         } catch (Exception e) {
-            Logger.error("Error while sleeping.");
+            Logger.error("PairingHandler - Error while sleeping.");
         }
     }
 
     private boolean startLeft(Device device) {
-        Logger.info("Attempting to set device " + device.ipAddress + " as new left neighbour.");
+        Logger.info("PairingHandler - Attempting to set device " + device.ipAddress + " as new left neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
         Thread btScanner = new Thread(bs);
         btScanner.start();
         sleep(1000);
         synchronized (pairingLock){
             if(leftRef.get() == null && (rightRef.get() == null || !rightRef.get().device.equals(device)) && leftRef.compareAndSet(nullBS, bs)) {
-                Logger.info("New left neighbour: [" + leftRef.get().device + "]");
+                Logger.info("PairingHandler - New left neighbour: [" + leftRef.get().device + "]");
                 return true;
             }
         }
-        Logger.error("Failed to set new left neighbour!\n\nLeft: " + leftRef.get() + "\n\nBs: " + bs);
+        Logger.error("PairingHandler - Failed to set new left neighbour!\n\nLeft: " + leftRef.get() + "\n\nBs: " + bs);
         btScanner.interrupt();
         return false;
     }
@@ -85,29 +86,29 @@ public class PairingHandler implements Runnable {
         if(message == Message.SET_LEFT_NEIGHBOUR_OK) {
             if (leftRef.get() == null && (rightRef.get() == null || !rightRef.get().device.equals(device))) {
                 boolean returnValue = startLeft(device);
-                pendingLeft = false;
+                pendingLeft = null;
                 return returnValue;
             }
         } else if (message == Message.SET_LEFT_NEIGHBOUR_FAILURE) {
             leftRef.set(null);
         }
-        pendingLeft = false;
+        pendingLeft = null;
         return false;
     }
 
     private boolean startRight(Device device) {
-        Logger.info("Attempting to set device " + device.ipAddress + " as new right neighbour.");
+        Logger.info("PairingHandler - Attempting to set device " + device.ipAddress + " as new right neighbour.");
         BluetoothScanner bs = new BluetoothScanner(device);
         Thread btScanner = new Thread(bs);
         btScanner.start();
         sleep(1000);
         synchronized (pairingLock){
             if(rightRef.get() == null && (leftRef.get() == null || !leftRef.get().device.equals(device)) && rightRef.compareAndSet(nullBS, bs)) {
-                Logger.info("New right neighbour: [" + rightRef.get().device + "]");
+                Logger.info("PairingHandler - New right neighbour: [" + rightRef.get().device + "]");
                 return true;
             }
         }
-        Logger.error("Failed to set new right neighbour!\n\nRight: " + right + "\n\nbs: " + bs);
+        Logger.error("PairingHandler - Failed to set new right neighbour!\n\nRight: " + right + "\n\nbs: " + bs);
         btScanner.interrupt();
         return false;
     }
@@ -125,13 +126,13 @@ public class PairingHandler implements Runnable {
         if (message == Message.SET_RIGHT_NEIGHBOUR_OK) {
             if (rightRef.get() == null && (leftRef.get() == null || !leftRef.get().device.equals(device))) {
                 boolean returnValue = startRight(device);
-                pendingRight = false;
+                pendingRight = null;
                 return returnValue;
             }
         } else if (message == Message.SET_RIGHT_NEIGHBOUR_FAILURE) {
             rightRef.set(null);
         }
-        pendingRight = false;
+        pendingRight = null;
         return false;
     }
 
@@ -153,11 +154,8 @@ public class PairingHandler implements Runnable {
         RoutingTable.add(Application.getLocalDevice(), value);
     }
 
-    private void searchForNeighbours() {
-        HashMap<BluetoothScanner, Thread> rssiValues = new HashMap<>();
-        ArrayList<Device> checkedDevices = new ArrayList<>();
+    private CopyOnWriteArrayList<Device> getFoundDevices() {
         CopyOnWriteArrayList<Device> devices;
-
         while((devices = InformationHolder.getDevices()).isEmpty()) {
             try {
                 Thread.sleep(100);
@@ -165,68 +163,108 @@ public class PairingHandler implements Runnable {
 
             }
         }
+        return devices;
+    }
+
+    /*
+
+     */
+
+    private ArrayList<Device> checkedDevices;
+
+    private HashMap<BluetoothScanner, Thread> startScannersForFoundDevices(CopyOnWriteArrayList<Device> devices) {
+        HashMap<BluetoothScanner, Thread> scanners = new HashMap<>();
         for(Device d : devices){
             BluetoothScanner bs = new BluetoothScanner(d);
             Thread btScanner = new Thread(bs);
             btScanner.start();
-            rssiValues.put(bs, btScanner);
+            scanners.put(bs, btScanner);
         }
-        try {
-            Thread.sleep(1000);
-        } catch (Exception e) {
+        return scanners;
+    }
 
+    private BluetoothScanner getClosestDeviceBluetoothScanner(HashMap<BluetoothScanner, Thread> scanners) {
+        int closestRssi = -100;
+        BluetoothScanner closestScanner = null;
+        for(Map.Entry<BluetoothScanner, Thread> me : scanners.entrySet()) {
+            // Check if left or right is available in the other device.
+            if(!checkedDevices.contains(me.getKey().device) && me.getKey().getRssi() >= closestRssi) {
+                closestScanner = me.getKey();
+                closestRssi = me.getKey().getRssi();
+                checkedDevices.add(closestScanner.device);
+            }
         }
+        return closestScanner;
+    }
 
-        while(leftRef.get() == null && rightRef.get() == null) {
-            int closestRssi = -100;
-            BluetoothScanner closest = null;
-            boolean foundNoDevices = true;
-            // Pair with closest device.
-            for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
-                // Check if left or right is available in the other device.
-                if(!checkedDevices.contains(me.getKey().device) && me.getKey().getRssi() >= closestRssi) {
-                    closest = me.getKey();
-                    closestRssi = me.getKey().getRssi();
-                    foundNoDevices = false;
-                }
-            }
-            if(closest != null) {
-                RemoteClient remoteClient = InformationHolder.remoteClients.get(closest.device.ipAddress);
-                try {
-                    pendingLeft = true;
-                    pendingRight = true;
-                    remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
-                    remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
-                    checkedDevices.add(closest.device);
-                } catch (Exception e){
+    private void sendPairingRequestToClosestNeighbour(BluetoothScanner closestScanner) throws IOException {
+        RemoteClient remoteClient = InformationHolder.remoteClients.get(closestScanner.device.ipAddress);
+        pendingLeft = remoteClient.getHostDevice();
+        pendingRight = remoteClient.getHostDevice();
+        remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_RIGHT_NEIGHBOUR, null, null));
+        remoteClient.sendMessage(new DataPacket(Application.getLocalDevice(), remoteClient.getHostDevice(), Message.SET_LEFT_NEIGHBOUR, null, null));
+    }
 
-                }
-            }
-            int maxTries = 20, attempt = 0;
-            while ((pendingLeft || pendingRight) && attempt < maxTries) {
-                try {
-                    Thread.sleep(100);
-                    attempt++;
-                } catch (Exception e) {
-
-                }
-            }
-            if(leftRef.get() == null && rightRef.get() == null) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-
-                }
-            }
-            if(foundNoDevices)
-                checkedDevices.clear();
-            System.out.println("Closest RSSI: " + closestRssi);
+    private void waitForResponsesOnPairingRequest() {
+        int maxTries = 20, attempt = 0;
+        while ((pendingLeft != null || pendingRight != null) && attempt < maxTries) {
+            sleep(100);
+            attempt++;
         }
-        for(Map.Entry<BluetoothScanner, Thread> me : rssiValues.entrySet()) {
+    }
+
+    // Find closest device
+    /*
+        1. Find closestScanner
+        2. If closestScanner != null then continue, else return.
+        3. Attempt to connect to closestScanner.device
+        4.
+    */
+
+    private boolean connectedToNeighbour(HashMap<BluetoothScanner, Thread> scanners) throws IOException {
+        BluetoothScanner closestScanner = getClosestDeviceBluetoothScanner(scanners);
+        if (closestScanner != null) {
+            sendPairingRequestToClosestNeighbour(closestScanner);
+            waitForResponsesOnPairingRequest();
+        } else {
+            checkedDevices.clear();
+        }
+        return leftRef.get() != null || rightRef.get() != null;
+    }
+
+
+
+    private void closeUnusedScanners(HashMap<BluetoothScanner, Thread> scanners) {
+        for(Map.Entry<BluetoothScanner, Thread> me : scanners.entrySet()) {
             // Check if left or right is available in the other device.
             if(me.getValue().isAlive())
                 me.getValue().interrupt();
         }
+    }
+
+        // Get devices, wait for at least one device
+
+        // Start bluetooth scanner to each found device. Sleep 1000ms to wait for results.
+
+        /* while left == null && right == null
+                attempt to connect to closest device on right or left
+                wait for responses
+                wait 1000ms
+        */
+
+        // interrupt every scanner other than left/right
+
+    private void searchForNeighbours() {
+        checkedDevices = new ArrayList<>();
+        CopyOnWriteArrayList<Device> devices = getFoundDevices();
+        HashMap<BluetoothScanner, Thread> scanners = startScannersForFoundDevices(devices);
+        sleep(1000);
+        try {
+            while (!connectedToNeighbour(scanners)) ;
+        } catch (Exception e) {
+            Logger.error("PairingHandler - Error while trying to connect to neighbour.\n\n" + e.getMessage());
+        }
+        closeUnusedScanners(scanners);
     }
 
     private int leftStrength, rightStrength;
