@@ -241,6 +241,12 @@ public class PairingHandler implements Runnable {
                 leftFailures = 0;
             System.out.println("Left [IP: " + leftRef.get().device.ipAddress + "] rssi: " + leftStrength);
             if(leftFailures == 10) {
+                DataPacket dataPacket = new DataPacket(Application.getLocalDevice(), leftRef.get().device, Message.SET_LEFT_NEIGHBOUR_FAILURE, null, null);
+                try {
+                    InformationHolder.remoteClients.get(leftRef.get().device.ipAddress).sendMessage(dataPacket);
+                } catch (Exception e) {
+
+                }
                 leftRef.set(null);
                 leftFailures = 0;
             }
@@ -253,6 +259,12 @@ public class PairingHandler implements Runnable {
                 rightFailures = 0;
             System.out.println("Right [IP: " + rightRef.get().device.ipAddress + "] rssi: " + rightStrength);
             if(rightFailures == 10) {
+                DataPacket dataPacket = new DataPacket(Application.getLocalDevice(), rightRef.get().device, Message.SET_RIGHT_NEIGHBOUR_FAILURE, null, null);
+                try {
+                    InformationHolder.remoteClients.get(rightRef.get().device.ipAddress).sendMessage(dataPacket);
+                } catch (Exception e) {
+
+                }
                 rightRef.set(null);
                 rightFailures = 0;
             }
