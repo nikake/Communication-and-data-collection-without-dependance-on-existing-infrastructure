@@ -84,16 +84,10 @@ public class LocalClient implements Runnable {
                 clientWriter.writeObject(returnPacket);
                 break;
             case SET_LEFT_NEIGHBOUR_FAILURE:
-                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.SET_LEFT_NEIGHBOUR_FAILURE);
-                break;
             case SET_RIGHT_NEIGHBOUR_FAILURE:
-                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.SET_RIGHT_NEIGHBOUR_FAILURE);
-                break;
             case SET_LEFT_NEIGHBOUR_SUCCESS:
-                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.SET_LEFT_NEIGHBOUR_SUCCESS);
-                break;
             case SET_RIGHT_NEIGHBOUR_SUCCESS:
-                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, Message.SET_RIGHT_NEIGHBOUR_SUCCESS);
+                PairingHandler.getInstance().setNeighbour(dataPacket.SENDER, dataPacket.MESSAGE);
                 break;
             case GET_INFO:
                 returnPacket = new DataPacket(Application.getLocalDevice(), clientDevice, Message.GET_INFO_OK, null, null);
