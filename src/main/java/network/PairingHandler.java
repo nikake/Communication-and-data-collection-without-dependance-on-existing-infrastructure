@@ -88,6 +88,8 @@ public class PairingHandler implements Runnable {
                 pendingLeft = false;
                 return returnValue;
             }
+        } else if (message == Message.SET_LEFT_NEIGHBOUR_FAILURE) {
+            leftRef.set(nullBS);
         }
         pendingLeft = false;
         return false;
@@ -126,6 +128,8 @@ public class PairingHandler implements Runnable {
                 pendingRight = false;
                 return returnValue;
             }
+        } else if (message == Message.SET_RIGHT_NEIGHBOUR_FAILURE) {
+            rightRef.set(nullBS);
         }
         pendingRight = false;
         return false;
