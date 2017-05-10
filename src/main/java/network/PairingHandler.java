@@ -275,7 +275,7 @@ public class PairingHandler implements Runnable {
             leftStrength = left.getRssi();
             if(leftStrength <= -100 && leftInitiated) {
                 leftFailures++;
-            } else {
+            } else if(leftStrength > -100){
                 leftInitiated = true;
                 leftFailures = 0;
             }
@@ -296,7 +296,7 @@ public class PairingHandler implements Runnable {
             rightStrength = right.getRssi();
             if(rightStrength <= -100 && rightInitiated) {
                 rightFailures++;
-            } else {
+            } else if(rightStrength > -100) {
                 rightInitiated = true;
                 rightFailures = 0;
             }
