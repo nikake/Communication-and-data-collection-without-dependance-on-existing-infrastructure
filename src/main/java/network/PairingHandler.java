@@ -202,6 +202,7 @@ public class PairingHandler implements Runnable {
         BluetoothScanner closestScanner = null;
         for(Map.Entry<BluetoothScanner, Thread> me : scanners.entrySet()) {
             // Check if left or right is available in the other device.
+            System.out.println("PairingHandler - Device: " + me.getKey().device.ipAddress + "Rssi: " + me.getKey().getRssi());
             if(!checkedDevices.contains(me.getKey().device) && me.getKey().getRssi() >= closestRssi) {
                 closestScanner = me.getKey();
                 closestRssi = me.getKey().getRssi();
