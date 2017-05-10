@@ -232,14 +232,6 @@ public class PairingHandler implements Runnable {
         pendingRight = null;
     }
 
-    // Find closest device
-    /*
-        1. Find closestScanner
-        2. If closestScanner != null then continue, else return.
-        3. Attempt to connect to closestScanner.device
-        4.
-    */
-
     private boolean connectedToNeighbour(HashMap<BluetoothScanner, Thread> scanners) throws IOException {
         BluetoothScanner closestScanner = getClosestDeviceBluetoothScanner(scanners);
         if (closestScanner != null) {
@@ -255,23 +247,11 @@ public class PairingHandler implements Runnable {
 
     private void closeUnusedScanners(HashMap<BluetoothScanner, Thread> scanners) {
         for(Map.Entry<BluetoothScanner, Thread> me : scanners.entrySet()) {
-            // Check if left or right is available in the other device.
+            me.getKey().close();
             if(me.getValue().isAlive())
                 me.getValue().interrupt();
         }
     }
-
-        // Get devices, wait for at least one device
-
-        // Start bluetooth scanner to each found device. Sleep 1000ms to wait for results.
-
-        /* while left == null && right == null
-                attempt to connect to closest device on right or left
-                wait for responses
-                wait 1000ms
-        */
-
-        // interrupt every scanner other than left/right
 
     private void searchForNeighbours() {
         checkedDevices = new ArrayList<>();
