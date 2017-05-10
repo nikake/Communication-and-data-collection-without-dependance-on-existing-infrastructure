@@ -35,6 +35,10 @@ public class BluetoothScanner implements Runnable {
         }
     }
 
+    public boolean initiated() {
+        return rssiValues.size() == 10;
+    }
+
     public void close() {
         keepRunning = false;
     }
