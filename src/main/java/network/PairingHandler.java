@@ -268,14 +268,17 @@ public class PairingHandler implements Runnable {
 
     private int leftStrength, rightStrength;
     private int leftFailures = 0, rightFailures = 0;
+    private boolean leftInitiated = false, rightInitiated = false;
 
     private void scanDistanceToNeighbours() {
         if (left != null) {
             leftStrength = left.getRssi();
-            if(leftStrength <= -100)
+            if(leftStrength <= -100 && leftInitiated) {
                 leftFailures++;
-            else
+            } else {
+                leftInitiated = true;
                 leftFailures = 0;
+            }
             System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
             if(leftFailures == 10) {
                 DataPacket dataPacket = new DataPacket(Application.getLocalDevice(), left.device, Message.SET_LEFT_NEIGHBOUR_FAILURE, null, null);
@@ -286,14 +289,17 @@ public class PairingHandler implements Runnable {
                 }
                 left = null;
                 leftFailures = 0;
+                leftInitiated = false;
             }
         }
         if (right != null) {
             rightStrength = right.getRssi();
-            if(rightStrength <= -100)
+            if(rightStrength <= -100 && rightInitiated) {
                 rightFailures++;
-            else
+            } else {
+                rightInitiated = true;
                 rightFailures = 0;
+            }
             System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
             if(rightFailures == 10) {
                 DataPacket dataPacket = new DataPacket(Application.getLocalDevice(), right.device, Message.SET_RIGHT_NEIGHBOUR_FAILURE, null, null);
@@ -304,6 +310,7 @@ public class PairingHandler implements Runnable {
                 }
                 right = null;
                 rightFailures = 0;
+                rightInitiated = false;
             }
         }
         try {
