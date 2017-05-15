@@ -297,6 +297,7 @@ public class PairingHandler implements Runnable {
             else
                 leftFailures = 0;
 
+            Logger.info("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
             System.out.println("Left [IP: " + left.device.ipAddress + "] rssi: " + leftStrength);
             if(leftFailures == 10) {
                 DataPacket dataPacket = new DataPacket(Application.getLocalDevice(), left.device, Message.SET_LEFT_NEIGHBOUR_FAILURE, null, null);
@@ -318,6 +319,7 @@ public class PairingHandler implements Runnable {
                 rightFailures = 0;
 
             System.out.println("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
+            Logger.info("Right [IP: " + right.device.ipAddress + "] rssi: " + rightStrength);
             if(rightFailures == 10) {
                 DataPacket dataPacket = new DataPacket(Application.getLocalDevice(), right.device, Message.SET_RIGHT_NEIGHBOUR_FAILURE, null, null);
                 try {
